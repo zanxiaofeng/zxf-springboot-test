@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class BProperties {
     private String name;
 
-    public BProperties(){
+    public BProperties() {
         System.out.println("*******************BProperties::ctor*******************");
     }
 
