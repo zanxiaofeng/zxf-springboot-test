@@ -32,7 +32,7 @@ class AControllerTest {
 
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("{\"abc\":\"in A Service\"}", response.getBody());
+        Assertions.assertEquals("{\"abc\":\"in A Service\",\"name\":\"Default A\",\"version\":\"1\"}", response.getBody());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
     }
 }

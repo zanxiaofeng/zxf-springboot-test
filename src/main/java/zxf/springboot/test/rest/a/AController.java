@@ -1,6 +1,7 @@
 package zxf.springboot.test.rest.a;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,8 @@ import java.util.Map;
 public class AController {
     @Autowired
     private AService aService;
+    @Value("${version}")
+    private String version;
 
     public AController() {
         System.out.println("*******************AController::ctor*******************");
@@ -21,6 +24,6 @@ public class AController {
     @GetMapping("/json")
     public Map<String, String> json() {
         System.out.println("*******************AController::json*******************");
-        return aService.json();
+        return aService.json(version);
     }
 }
