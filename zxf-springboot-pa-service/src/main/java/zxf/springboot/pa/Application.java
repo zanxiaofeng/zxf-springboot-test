@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
-
     public Application() {
         System.out.println("*******************Application::ctor*******************");
     }
@@ -14,6 +13,5 @@ public class Application {
         System.out.println("*******************Application::main*******************");
         SpringApplication.run(Application.class, args);
     }
-
 }
 

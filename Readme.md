@@ -81,3 +81,6 @@
 - org.mockito.junit.MockitoJUnitRunner
 - org.mockito.junit.jupiter.MockitoExtension
 - org.mockito.junit.jupiter.MockitoSettings
+
+# Openfeign Configuration
+- /org/springframework/cloud/spring-cloud-openfeign-core/3.1.7/spring-cloud-openfeign-core-3.1.7.jar!/META-INF/additional-spring-configuration-metadata.json

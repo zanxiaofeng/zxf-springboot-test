@@ -22,7 +22,7 @@ public class BController {
     }
 
     @GetMapping("/json")
-    public Map<String, String> json() {
+    public Map<String, Object> json() {
         System.out.println("*******************BController::json*******************");
         return bService.json(version);
     }

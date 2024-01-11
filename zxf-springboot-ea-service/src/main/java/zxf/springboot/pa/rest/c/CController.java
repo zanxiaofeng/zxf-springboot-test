@@ -22,7 +22,7 @@ public class CController {
     }
 
     @GetMapping("/json")
-    public Map<String, String> json() {
+    public Map<String, Object> json() {
         System.out.println("*******************CController::json*******************");
         return cService.json(version);
     }

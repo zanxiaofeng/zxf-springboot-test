@@ -1,10 +1,12 @@
 package zxf.springboot.pa.rest.a;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -18,6 +20,6 @@ public class AController {
     @GetMapping("/json")
     public Map<String, Object> json(@RequestParam String version) {
         System.out.println("*******************AController::json*******************");
-        return null;
+        return Collections.singletonMap("value", "Value of A from PA: " + System.currentTimeMillis());
     }
 }

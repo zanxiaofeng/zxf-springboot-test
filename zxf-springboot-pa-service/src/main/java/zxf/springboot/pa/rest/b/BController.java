@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -18,6 +19,6 @@ public class BController {
     @GetMapping("/json")
     public Map<String, String> json(@RequestParam String version) {
         System.out.println("*******************BController::json*******************");
-        return null;
+        return Collections.singletonMap("value", "Value of B from PA: " + System.currentTimeMillis());
     }
 }
