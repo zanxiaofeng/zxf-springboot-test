@@ -1,8 +1,11 @@
 package zxf.springboot.pa.client;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Collections;
 import java.util.Map;
 
+@Service
 public class PAClientFallback implements PAClient {
     @Override
     public Map<String, Object> serviceA(String version) {

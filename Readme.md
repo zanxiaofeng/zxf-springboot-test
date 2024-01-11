@@ -82,5 +82,9 @@
 - org.mockito.junit.jupiter.MockitoExtension
 - org.mockito.junit.jupiter.MockitoSettings
 
+# Core classes of Openfeign
+- org.springframework.cloud.openfeign.EnableFeignClients;
+- org.springframework.cloud.openfeign.FeignClient;
+
 # Openfeign Configuration
 - /org/springframework/cloud/spring-cloud-openfeign-core/3.1.7/spring-cloud-openfeign-core-3.1.7.jar!/META-INF/additional-spring-configuration-metadata.json
