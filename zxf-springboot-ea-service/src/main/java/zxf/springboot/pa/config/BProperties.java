@@ -1,24 +1,26 @@
 package zxf.springboot.pa.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 @ConfigurationProperties(prefix = "b")
 public class BProperties {
     private String name;
 
     public BProperties() {
-        System.out.println("*******************BProperties::ctor*******************");
+        log.info("::ctor");
     }
 
     public String getName() {
-        System.out.println("*******************BProperties::getName*******************");
+        log.info("::getName");
         return name;
     }
 
     public void setName(String name) {
-        System.out.println("*******************BProperties::setName*******************");
+        log.info("::setName");
         this.name = name;
     }
 }

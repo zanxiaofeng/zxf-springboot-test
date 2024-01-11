@@ -1,5 +1,6 @@
 package zxf.springboot.pa.rest.b;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import zxf.springboot.pa.service.b.BService;
 
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/b")
 public class BController {
@@ -18,12 +20,12 @@ public class BController {
     private String version;
 
     public BController() {
-        System.out.println("*******************BController::ctor*******************");
+        log.info("::ctor");
     }
 
     @GetMapping("/json")
     public Map<String, Object> json() {
-        System.out.println("*******************BController::json*******************");
+        log.info("::json");
         return bService.json(version);
     }
 }

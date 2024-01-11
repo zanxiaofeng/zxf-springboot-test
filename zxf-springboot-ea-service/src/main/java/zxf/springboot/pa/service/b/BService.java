@@ -1,5 +1,6 @@
 package zxf.springboot.pa.service.b;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zxf.springboot.pa.client.PAClient;
@@ -8,6 +9,7 @@ import zxf.springboot.pa.config.BProperties;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class BService {
     @Autowired
@@ -17,11 +19,11 @@ public class BService {
     private PAClient paClient;
 
     public BService() {
-        System.out.println("*******************BService::ctor*******************");
+        log.info("::ctor");
     }
 
     public Map<String, Object> json(String version) {
-        System.out.println("*******************BService::json*******************");
+        log.info("::json");
         Map<String, Object> json = new HashMap<>();
         json.put("version", version);
         json.put("name", bProperties.getName());
