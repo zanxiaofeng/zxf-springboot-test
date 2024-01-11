@@ -27,3 +27,57 @@
 - Hamcrest
 - Assertj
 - JSONAssert(JSONPath)
+
+# Core classes of Junit5
+- org.junit.jupiter.api.Test@
+- org.junit.jupiter.api.Assertions;
+- org.junit.jupiter.api.BeforeAll@
+- org.junit.jupiter.api.BeforeEach@
+- org.junit.jupiter.api.AfterAll@
+- org.junit.jupiter.api.AfterEach@
+- org.junit.jupiter.api.TestInstance@
+- org.junit.jupiter.api.DisplayName@
+- org.junit.jupiter.api.extension.ExtendWith@
+- org.junit.jupiter.params.ParameterizedTest@
+- org.junit.jupiter.params.provider.CsvSource@
+- org.junit.jupiter.params.provider.ValueSource@
+
+# Core classes of Junit4
+- org.junit.Test@
+- org.junit.Before@
+- org.junit.Ignore@
+- org.junit.Assert
+- org.junit.runner.RunWith@
+
+# Core classes of Springboot test
+- org.springframework.boot.test.context.SpringBootTest@
+- org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest@
+- org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc@
+- org.springframework.boot.test.web.client.TestRestTemplate
+- org.springframework.boot.test.mock.mockito.MockBean@
+- org.springframework.boot.test.mock.mockito.SpyBean@
+- org.springframework.test.context.ActiveProfiles@
+- org.springframework.test.context.TestPropertySource@
+- org.springframework.test.web.servlet.MockMvc
+- org.springframework.test.web.servlet.MvcResult
+- org.springframework.test.web.servlet.RequestBuilder
+- org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+- org.springframework.test.web.servlet.result.MockMvcResultMatchers
+- org.springframework.test.util.ReflectionTestUtils
+
+# Core classes of assertj
+- org.assertj.core.api.Assertions
+
+# Core classes of mockito
+- org.mockito.Mockito
+- org.mockito.BDDMockito
+- org.mockito.Mock@
+- org.mockito.Spy@
+- org.mockito.InjectMocks@
+- org.mockito.ArgumentCaptor
+- org.mockito.ArgumentMatchers
+- org.mockito.MockedStatic
+- org.mockito.quality.Strictness
+- org.mockito.junit.MockitoJUnitRunner
+- org.mockito.junit.jupiter.MockitoExtension
+- org.mockito.junit.jupiter.MockitoSettings
