@@ -21,3 +21,9 @@
 ## WebMvc切面测试
 - @WebMvcTest, 该注解仅会创建指定的Ｃontroller　bean，该Ｃontroller依赖的其他bean需要使用＠ＭockＢean注入
 
+
+# Assert Framework
+- Junit自带的Assert
+- Hamcrest
+- Assertj
+- JSONAssert(JSONPath)
