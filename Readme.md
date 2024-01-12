@@ -86,5 +86,42 @@
 - org.springframework.cloud.openfeign.EnableFeignClients;
 - org.springframework.cloud.openfeign.FeignClient;
 
+# Core classes of Resilience4j
+- io.github.resilience4j.bulkhead.annotation.Bulkhead@
+- io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker@
+- io.github.resilience4j.ratelimiter.annotation.RateLimiter@
+- io.github.resilience4j.retry.annotation.Retry@
+- io.github.resilience4j.timelimiter.annotation.TimeLimiter@
+- io.github.resilience4j.circuitbreaker.CircuitBreaker
+- io.github.resilience4j.circuitbreaker.CircuitBreakerConfig
+- io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry
+- io.github.resilience4j.ratelimiter.RateLimiter
+- io.github.resilience4j.ratelimiter.RateLimiterConfig
+- io.github.resilience4j.ratelimiter.RateLimiterRegistry
+- io.github.resilience4j.retry.Retry
+- io.github.resilience4j.retry.RetryConfig
+- io.github.resilience4j.retry.RetryRegistry
+- io.github.resilience4j.timelimiter.TimeLimiter
+- io.github.resilience4j.timelimiter.TimeLimiterConfig
+- io.github.resilience4j.timelimiter.TimeLimiterRegistry
+- io.github.resilience4j.bulkhead.autoconfigure.BulkheadAutoConfiguration
+- io.github.resilience4j.bulkhead.autoconfigure.BulkheadMetricsAutoConfiguration
+- io.github.resilience4j.bulkhead.autoconfigure.ThreadPoolBulkheadMetricsAutoConfiguration
+- io.github.resilience4j.retry.autoconfigure.RetryAutoConfiguration
+- io.github.resilience4j.retry.autoconfigure.RetryMetricsAutoConfiguration
+- io.github.resilience4j.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration
+- io.github.resilience4j.circuitbreaker.autoconfigure.CircuitBreakerStreamEventsAutoConfiguration
+- io.github.resilience4j.circuitbreaker.autoconfigure.CircuitBreakerMetricsAutoConfiguration
+- io.github.resilience4j.circuitbreaker.autoconfigure.CircuitBreakersHealthIndicatorAutoConfiguration
+- io.github.resilience4j.ratelimiter.autoconfigure.RateLimiterAutoConfiguration
+- io.github.resilience4j.ratelimiter.autoconfigure.RateLimiterMetricsAutoConfiguration
+- io.github.resilience4j.ratelimiter.autoconfigure.RateLimitersHealthIndicatorAutoConfiguration
+- io.github.resilience4j.timelimiter.autoconfigure.TimeLimiterAutoConfiguration
+- io.github.resilience4j.timelimiter.autoconfigure.TimeLimiterMetricsAutoConfiguration
+- io.github.resilience4j.scheduled.threadpool.autoconfigure.ContextAwareScheduledThreadPoolAutoConfiguration
+
 # Openfeign Configuration
 - /org/springframework/cloud/spring-cloud-openfeign-core/3.1.7/spring-cloud-openfeign-core-3.1.7.jar!/META-INF/additional-spring-configuration-metadata.json
+
+# Resilience4j Configuration
+- /io/github/resilience4j/resilience4j-spring-boot2/1.7.0/resilience4j-spring-boot2-1.7.0.jar!/META-INF/spring-configuration-metadata.json
