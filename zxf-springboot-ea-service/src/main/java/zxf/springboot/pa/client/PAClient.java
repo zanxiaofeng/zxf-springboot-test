@@ -1,18 +1,28 @@
 package zxf.springboot.pa.client;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.Map;
 
-@FeignClient(value = "pa-service", url = "${pa-service.url}", fallback = PAClientFallback.class)
-public interface PAClient {
-    @GetMapping("/pa/a/json")
-    Map<String, Object> serviceA(@RequestParam String version);
+@Slf4j
+@Service
+public class PAClient {
+    @Value("${pa-service.url}")
+    private String baseUrl;
 
-    @GetMapping("/pa/b/json")
-    Map<String, Object> serviceB(@RequestParam String version);
-
-    @GetMapping("/pa/c/json")
-    Map<String, Object> serviceC(@RequestParam String version);
+    public Map<String, Object> callDownstreamSync(String path) {
+        try {
+            log.info("::callDownstreamSync START, path={}", path);
+            Map<String, Object> result = new RestTemplate().getForObject(URI.create(baseUrl + path), Map.class);
+            log.info("::callDownstreamSync END, path={}, result={}", path, result);
+            return result;
+        } catch (Throwable ex) {
+            log.error("Exception when call downstream api.", ex);
+            throw ex;
+        }
+    }
 }

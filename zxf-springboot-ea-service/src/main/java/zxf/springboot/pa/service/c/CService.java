@@ -28,7 +28,7 @@ public class CService {
         json.put("version", version);
         json.put("name", cProperties.getName());
         json.put("value", "Default Value in C Service of EA");
-        json.put("downstream", paClient.serviceB(version));
+        json.put("downstream", paClient.callDownstreamSync("/pa/c/json?version=" + version));
         return json;
     }
 }
