@@ -1,14 +1,20 @@
 package zxf.springboot.pa.rest.a;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import zxf.springboot.pa.service.PAService;
 
 import java.util.Collections;
 import java.util.Map;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestController
@@ -20,8 +26,8 @@ public class AController {
     }
 
     @GetMapping("/json")
-    public Map<String, Object> json(@RequestParam String version) {
+    public ResponseEntity<Map<String, Object>> json(@RequestParam Integer task) throws InterruptedException {
         log.info("::json");
-        return Collections.singletonMap("value", "Value of A from PA: " + System.currentTimeMillis());
+        return PAService.result(task, "A");
     }
 }

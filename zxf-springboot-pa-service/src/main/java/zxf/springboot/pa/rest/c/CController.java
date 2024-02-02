@@ -1,12 +1,13 @@
 package zxf.springboot.pa.rest.c;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import zxf.springboot.pa.service.PAService;
 
-import java.util.Collections;
 import java.util.Map;
 
 @Slf4j
@@ -18,8 +19,8 @@ public class CController {
     }
 
     @GetMapping("/json")
-    public Map<String, String> json(@RequestParam String version) {
+    public ResponseEntity<Map<String, Object>> json(@RequestParam Integer task) throws InterruptedException {
         log.info("::json");
-        return Collections.singletonMap("value", "Value of C from PA: " + System.currentTimeMillis());
+        return PAService.result(task, "C");
     }
 }

@@ -4,38 +4,40 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import zxf.springboot.pa.service.b.BService;
+import zxf.springboot.pa.client.PAClient;
 
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(BController.class)
-@TestPropertySource(properties = {"version=v"})
+@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = MOCK)
 public class BControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
-    BService bService;
+    PAClient paClient;
 
     @Test
     void testJson() throws Exception {
         //Given
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json");
-        Mockito.when(bService.json("v")).thenReturn(Collections.singletonMap("abc", "in Mock Service"));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json?task=200");
+        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSync(eq("/pa/b/json?task=200"));
 
         //When
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        Assertions.assertEquals("{\"abc\":\"in Mock Service\"}", mvcResult.getResponse().getContentAsString());
-        Mockito.verify(bService).json("v");
+        Assertions.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", mvcResult.getResponse().getContentAsString());
+        Mockito.verify(paClient).callDownstreamSync(eq("/pa/b/json?task=200"));
     }
 }
