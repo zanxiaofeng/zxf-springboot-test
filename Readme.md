@@ -87,6 +87,39 @@
 - com.github.tomakehurst.wiremock.verification.RequestJournal
 - com.github.tomakehurst.wiremock.WireMockServer
 
+# Core classes of RestTemplate
+- org.springframework.web.client.RestTemplate;
+- org.springframework.http.client.ClientHttpResponse[interface]
+- org.springframework.http.client.HttpComponentsClientHttpResponse
+- org.springframework.http.client.OkHttp3ClientHttpResponse
+- org.springframework.http.client.ClientHttpRequestFactory[interface]
+- org.springframework.http.client.HttpComponentsClientHttpRequestFactory
+- org.springframework.http.client.OkHttp3ClientHttpRequestFactory
+- org.springframework.http.HttpStatus
+- org.springframework.http.RequestEntity
+- org.springframework.http.ResponseEntity
+- org.springframework.http.converter.HttpMessageConverter[interface]
+- org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+- org.springframework.http.converter.json.GsonHttpMessageConverter
+- org.springframework.web.client.ResponseErrorHandler[interface]
+- org.springframework.web.client.DefaultResponseErrorHandler
+- org.springframework.web.client.ExtractingResponseErrorHandler
+- org.springframework.boot.test.web.client.TestRestTemplate.NoOpResponseErrorHandler
+- org.springframework.web.client.RestClientException
+- org.springframework.web.client.RestClientResponseException
+- org.springframework.web.client.HttpStatusCodeException
+- org.springframework.web.client.HttpClientErrorException
+- org.springframework.web.client.HttpClientErrorException$BadRequest
+- org.springframework.web.client.HttpServerErrorException
+- org.springframework.web.client.HttpServerErrorException$InternalServerError
+- org.springframework.web.client.UnknownHttpStatusCodeException
+- org.springframework.web.client.ResponseExtractor<T>[interface]
+- org.springframework.web.client.RestTemplate$HeadersExtractor[HttpHeaders]
+- org.springframework.web.client.RestTemplate$ResponseEntityResponseExtractor<T>
+- org.springframework.web.client.HttpMessageConverterExtractor<T>[ResponseEntity<T>]
+- org.springframework.web.client.RequestCallback[interface]
+- org.springframework.web.util.UriTemplateHandler[interface]
+
 # Core classes of mockito
 - org.mockito.Mockito
 - org.mockito.BDDMockito

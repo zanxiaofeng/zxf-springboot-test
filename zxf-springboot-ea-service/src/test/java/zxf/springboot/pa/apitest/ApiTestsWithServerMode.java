@@ -79,4 +79,23 @@ public class ApiTestsWithServerMode {
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
         JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", response.getBody(), true);
     }
+
+    @Test
+    void testC400(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
+        //Given
+        String requestUrl = "/c/json?task=400";
+
+        // Dynamic mock can be used as required in callback code
+        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
+        wireMock.register(get("/pa/c/json?task=400").willReturn(badRequest().withBody("{\"code\":\"400\"}")
+                .withHeader("Content-Type", "application/json")));
+
+        //When
+        ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
+
+        //Then
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        JSONAssert.assertEquals("{\"task\":\"400\",\"downstream\":null,\"value\":\"Default Value in C Service of EA\"}", response.getBody(), true);
+    }
 }

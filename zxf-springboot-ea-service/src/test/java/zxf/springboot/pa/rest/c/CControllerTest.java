@@ -3,6 +3,7 @@ package zxf.springboot.pa.rest.c;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,13 +36,13 @@ public class CControllerTest {
     void testJson() throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
-        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSync(eq("/pa/c/json?task=200"));
+        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSync(eq("/pa/c/json?task=200"), eq(false));
 
         //When
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        Assertions.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString());
-        Mockito.verify(paClient).callDownstreamSync(eq("/pa/c/json?task=200"));
+        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+        Mockito.verify(paClient).callDownstreamSync(eq("/pa/c/json?task=200"), eq(false));
     }
 }

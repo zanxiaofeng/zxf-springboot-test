@@ -23,7 +23,7 @@ public class PAService {
         Map<String, Object> json = new HashMap<>();
         json.put("task", task);
         json.put("value", "Default Value in A Service of EA");
-        json.put("downstream", paClient.callDownstreamSync("/pa/a/json?task=" + task));
+        json.put("downstream", paClient.callDownstreamSync("/pa/a/json?task=" + task, true));
         return json;
     }
 
@@ -32,7 +32,7 @@ public class PAService {
         Map<String, Object> json = new HashMap<>();
         json.put("task", task);
         json.put("value", "Default Value in B Service of EA");
-        json.put("downstream", paClient.callDownstreamSync("/pa/b/json?task=" + task));
+        json.put("downstream", paClient.callDownstreamSync("/pa/b/json?task=" + task, true));
         return json;
     }
 
@@ -41,7 +41,7 @@ public class PAService {
         Map<String, Object> json = new HashMap<>();
         json.put("task", task);
         json.put("value", "Default Value in C Service of EA");
-        json.put("downstream", paClient.callDownstreamSync("/pa/c/json?task=" + task));
+        json.put("downstream", paClient.callDownstreamSync("/pa/c/json?task=" + task, false));
         return json;
     }
 }
