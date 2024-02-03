@@ -21,7 +21,6 @@
 ## WebMvc切面测试
 - @WebMvcTest, 该注解仅会创建指定的Controller　bean，该Controller依赖的其他bean需要使用＠ＭockＢean注入
 
-
 # Assert Framework
 - Junit自带的Assert
 - Hamcrest
@@ -37,10 +36,19 @@
 - org.junit.jupiter.api.AfterEach@
 - org.junit.jupiter.api.TestInstance@
 - org.junit.jupiter.api.DisplayName@
-- org.junit.jupiter.api.extension.ExtendWith@
 - org.junit.jupiter.params.ParameterizedTest@
 - org.junit.jupiter.params.provider.CsvSource@
 - org.junit.jupiter.params.provider.ValueSource@
+- org.junit.jupiter.api.extension.ExtendWith@
+- org.junit.jupiter.api.extension.AfterAllCallback;
+- org.junit.jupiter.api.extension.AfterEachCallback;
+- org.junit.jupiter.api.extension.BeforeAllCallback;
+- org.junit.jupiter.api.extension.BeforeEachCallback;
+- org.junit.jupiter.api.extension.ExtensionContext;
+- org.junit.jupiter.api.extension.ParameterContext;
+- org.junit.jupiter.api.extension.ParameterResolutionException;
+- org.junit.jupiter.api.extension.ParameterResolver;
+- org.junit.platform.commons.support.AnnotationSupport;
 
 # Core classes of Junit4
 - org.junit.Test@
@@ -67,6 +75,17 @@
 
 # Core classes of assertj
 - org.assertj.core.api.Assertions
+
+# Core classes of WireMock
+- com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+- com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+- com.github.tomakehurst.wiremock.junit5.WireMockTest;
+- com.github.tomakehurst.wiremock.client.WireMock;
+- com.github.tomakehurst.wiremock.matching.ValueMatcher
+- com.github.tomakehurst.wiremock.matching.NamedValueMatcher
+- com.github.tomakehurst.wiremock.stubbing.StubMapping
+- com.github.tomakehurst.wiremock.verification.RequestJournal
+- com.github.tomakehurst.wiremock.WireMockServer
 
 # Core classes of mockito
 - org.mockito.Mockito
