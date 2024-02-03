@@ -3,8 +3,10 @@ package zxf.springboot.pa.apitest;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -24,7 +26,7 @@ public class ApiTestsWithServerMode {
     TestRestTemplate testRestTemplate;
 
     @Test
-    void testA() {
+    void testA() throws JSONException {
         //Given
         String requestUrl = "/a/json?task=200";
         // Static mock
@@ -37,11 +39,11 @@ public class ApiTestsWithServerMode {
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in A Service of EA\"}", response.getBody());
+        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in A Service of EA\"}", response.getBody(), true);
     }
 
     @Test
-    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
         //Given
         String requestUrl = "/b/json?task=200";
 
@@ -56,11 +58,11 @@ public class ApiTestsWithServerMode {
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", response.getBody());
+        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", response.getBody(), true);
     }
 
     @Test
-    void testC(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    void testC(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
         //Given
         String requestUrl = "/c/json?task=200";
 
@@ -75,6 +77,6 @@ public class ApiTestsWithServerMode {
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", response.getBody());
+        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", response.getBody(), true);
     }
 }
