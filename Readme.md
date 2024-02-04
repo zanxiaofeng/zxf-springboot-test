@@ -58,8 +58,8 @@
 - org.junit.runner.RunWith@
 
 # Core classes of Springboot test
-- org.springframework.boot.test.context.SpringBootTest@
-- org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest@
+- org.springframework.boot.test.context.SpringBootTest@[Include @ExtendWith]
+- org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest@[Include @ExtendWith]
 - org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc@
 - org.springframework.boot.test.web.client.TestRestTemplate
 - org.springframework.boot.test.mock.mockito.MockBean@
@@ -93,7 +93,7 @@
 # Core classes of WireMock
 - com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 - com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-- com.github.tomakehurst.wiremock.junit5.WireMockTest;
+- com.github.tomakehurst.wiremock.junit5.WireMockTest[Include @ExtendWith]
 - com.github.tomakehurst.wiremock.client.WireMock;
 - com.github.tomakehurst.wiremock.matching.ValueMatcher
 - com.github.tomakehurst.wiremock.matching.NamedValueMatcher
