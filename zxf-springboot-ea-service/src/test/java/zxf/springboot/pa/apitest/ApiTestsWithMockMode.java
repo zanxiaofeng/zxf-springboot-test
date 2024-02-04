@@ -5,7 +5,12 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.RegularExpressionValueMatcher;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
+import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.NestedServletException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -72,7 +76,7 @@ public class ApiTestsWithMockMode {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
     }
 
     @Test
@@ -89,7 +93,7 @@ public class ApiTestsWithMockMode {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
     }
 
     @Test
@@ -107,5 +111,9 @@ public class ApiTestsWithMockMode {
 
         //Then
         JSONAssert.assertEquals("{\"task\":\"400\",\"downstream\":null,\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+    }
+
+    private JSONComparator customizeJSONComparator() {
+        return new CustomComparator(JSONCompareMode.STRICT, Customization.customization("task", new RegularExpressionValueMatcher<>("\\d")));
     }
 }

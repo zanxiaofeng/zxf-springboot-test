@@ -76,6 +76,20 @@
 # Core classes of assertj
 - org.assertj.core.api.Assertions
 
+# Core classes of JSONAssert
+- org.skyscreamer.jsonassert.JSONAssert
+- org.skyscreamer.jsonassert.JSONCompareMode
+- org.skyscreamer.jsonassert.JSONCompare
+- org.skyscreamer.jsonassert.JSONCompareResult
+- org.skyscreamer.jsonassert.comparator.JSONComparator[interface]
+- org.skyscreamer.jsonassert.comparator.AbstractComparator
+- org.skyscreamer.jsonassert.comparator.CustomComparator
+- org.skyscreamer.jsonassert.Customization
+- org.skyscreamer.jsonassert.comparator.DefaultComparator
+- org.skyscreamer.jsonassert.comparator.ArraySizeComparator
+- org.skyscreamer.jsonassert.ValueMatcher<T>[interface]
+- org.skyscreamer.jsonassert.RegularExpressionValueMatcher<T>
+
 # Core classes of WireMock
 - com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 - com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
