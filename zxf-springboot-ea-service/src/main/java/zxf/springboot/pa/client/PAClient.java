@@ -2,9 +2,6 @@ package zxf.springboot.pa.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -15,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,11 +50,11 @@ public class PAClient {
             });
         }
         restTemplate.setInterceptors(List.of((request, body, execution) -> {
-            log.debug("Request body: {}", new String(body, StandardCharsets.UTF_8));
+            log.info("Request body: {}", new String(body, StandardCharsets.UTF_8));
             ClientHttpResponse response = execution.execute(request, body);
-            InputStreamReader isr = new InputStreamReader(response.getBody(), StandardCharsets.UTF_8);
-            String responseBody = new BufferedReader(isr).lines().collect(Collectors.joining("\n"));
-            log.debug("Response body: {}", responseBody);
+//            InputStreamReader isr = new InputStreamReader(response.getBody(), StandardCharsets.UTF_8);
+//            String responseBody = new BufferedReader(isr).lines().collect(Collectors.joining("\n"));
+//            log.info("Response body: {}", responseBody);
             return response;
         }));
         return restTemplate;

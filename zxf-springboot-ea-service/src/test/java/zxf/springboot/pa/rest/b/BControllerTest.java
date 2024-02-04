@@ -38,7 +38,7 @@ public class BControllerTest {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+        JSONAssert.assertEquals("{\"task\":\"B-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", mvcResult.getResponse().getContentAsString(), true);
         Mockito.verify(paClient).callDownstreamSync(eq("/pa/b/json?task=200"), eq(true));
     }
 }

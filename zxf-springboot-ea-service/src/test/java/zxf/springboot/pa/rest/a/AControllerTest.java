@@ -38,7 +38,7 @@ class AControllerTest {
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in A Service of EA\"}", response.getBody(), true);
+        JSONAssert.assertEquals("{\"task\":\"A-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", response.getBody(), true);
         Mockito.verify(paClient).callDownstreamSync(eq("/pa/a/json?task=200"), eq(true));
     }
 }

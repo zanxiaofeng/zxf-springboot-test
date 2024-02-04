@@ -38,14 +38,48 @@ public class ApiTestsWithMockMode {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/a/json?task=200");
         // Static mock
-        stubFor(get("/pa/a/json?task=200").willReturn(ok("{\"abc\":\"in Mock Service\"}")
+        stubFor(get("/pa/a/json?task=200").willReturn(ok("{\"task\":\"A-200\",\"value\":\"1707039601565\"}")
                 .withHeader("Content-Type", "application/json")));
 
         //When
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in A Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+        JSONAssert.assertEquals("{\"task\":\"A-200\",\"downstream\":{\"task\":\"A-200\",\"value\":\"1707039601500\"}}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
+    }
+
+    @Test
+    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+        //Given
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json?task=200");
+
+        // Dynamic mock can be used as required in callback code
+        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
+        wireMock.stubFor(get("/pa/b/json?task=200").willReturn(ok("{\"task\":\"B-200\",\"value\":\"1707039601565\"}")
+                .withHeader("Content-Type", "application/json")));
+
+        //When
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+
+        //Then
+        JSONAssert.assertEquals("{\"task\":\"B-200\",\"downstream\":{\"task\":\"B-200\",\"value\":\"1707039601500\"}}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
+    }
+
+    @Test
+    void testC(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+        //Given
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
+
+        // Dynamic mock can be used as required in callback code
+        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
+        wireMock.stubFor(get("/pa/c/json?task=200").willReturn(ok("{\"task\":\"C-200\",\"value\":\"1707039601565\"}")
+                .withHeader("Content-Type", "application/json")));
+
+        //When
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+
+        //Then
+        JSONAssert.assertEquals("{\"task\":\"C-200\",\"downstream\":{\"task\":\"C-200\",\"value\":\"1707039601500\"}}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
     }
 
     @Test
@@ -63,40 +97,6 @@ public class ApiTestsWithMockMode {
     }
 
     @Test
-    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
-        //Given
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json?task=200");
-
-        // Dynamic mock can be used as required in callback code
-        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
-        wireMock.stubFor(get("/pa/b/json?task=200").willReturn(ok("{\"abc\":\"in Mock Service\"}")
-                .withHeader("Content-Type", "application/json")));
-
-        //When
-        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
-
-        //Then
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in B Service of EA\"}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
-    }
-
-    @Test
-    void testC(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
-        //Given
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
-
-        // Dynamic mock can be used as required in callback code
-        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
-        wireMock.stubFor(get("/pa/c/json?task=200").willReturn(ok("{\"abc\":\"in Mock Service\"}")
-                .withHeader("Content-Type", "application/json")));
-
-        //When
-        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
-
-        //Then
-        JSONAssert.assertEquals("{\"task\":\"200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString(), customizeJSONComparator());
-    }
-
-    @Test
     void testC400(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=400");
@@ -110,10 +110,10 @@ public class ApiTestsWithMockMode {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"400\",\"downstream\":null,\"value\":\"Default Value in C Service of EA\"}", mvcResult.getResponse().getContentAsString(), true);
+        JSONAssert.assertEquals("{\"task\":\"C-400\",\"downstream\":{\"code\":\"400\"}}", mvcResult.getResponse().getContentAsString(), true);
     }
 
     private JSONComparator customizeJSONComparator() {
-        return new CustomComparator(JSONCompareMode.STRICT, Customization.customization("task", new RegularExpressionValueMatcher<>("\\d")));
+        return new CustomComparator(JSONCompareMode.STRICT, Customization.customization("downstream.value", new RegularExpressionValueMatcher<>("\\d+")));
     }
 }
