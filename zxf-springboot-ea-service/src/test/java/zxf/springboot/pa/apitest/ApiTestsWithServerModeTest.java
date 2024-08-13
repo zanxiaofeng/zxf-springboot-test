@@ -26,7 +26,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @WireMockTest(httpPort = 8089)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = {"pa-service.url=http://localhost:8089"})
-public class ApiTestsWithServerMode {
+public class ApiTestsWithServerModeTest {
     @Autowired
     TestRestTemplate testRestTemplate;
 

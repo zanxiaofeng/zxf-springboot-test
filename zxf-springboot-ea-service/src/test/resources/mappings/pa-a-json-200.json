@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/pa/a/json?task=200"
+  },
+
+  "response": {
+    "status": 200,
+    "body": "{\"task\":\"A-200\",\"value\":\"1707039601565\"}",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

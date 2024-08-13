@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
 @TestPropertySource(properties = {"pa-service.url=http://localhost:8089"})
-public class ApiTestsWithMockMode {
+public class ApiTestsWithMockModeTest {
     @Autowired
     MockMvc mockMvc;
 
@@ -37,9 +37,6 @@ public class ApiTestsWithMockMode {
     void testA() throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/a/json?task=200");
-        // Static mock
-        stubFor(get("/pa/a/json?task=200").willReturn(ok("{\"task\":\"A-200\",\"value\":\"1707039601565\"}")
-                .withHeader("Content-Type", "application/json")));
 
         //When
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
@@ -114,6 +111,6 @@ public class ApiTestsWithMockMode {
     }
 
     private JSONComparator customizeJSONComparator() {
-        return new CustomComparator(JSONCompareMode.STRICT, Customization.customization("downstream.value", new RegularExpressionValueMatcher<>("\\d+")));
+        return new CustomComparator(JSONCompareMode.STRICT, Customization.customization("**.downstream.value", new RegularExpressionValueMatcher<>("\\d+")));
     }
 }

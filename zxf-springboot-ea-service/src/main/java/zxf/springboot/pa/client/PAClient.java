@@ -2,7 +2,9 @@ package zxf.springboot.pa.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +24,12 @@ public class PAClient {
     @Value("${pa-service.url}")
     private String baseUrl;
 
+    @Value("${pa-service.connectTimeout}")
+    private Integer connectTimeout;
+
+    @Value("${pa-service.readTimeout}")
+    private Integer readTimeout;
+
     public Map<String, Object> callDownstreamSync(String path, Boolean exception) {
         try {
             log.info("::callDownstreamSync START, path={}", path);
@@ -35,7 +43,10 @@ public class PAClient {
     }
 
     private RestTemplate createRestTemplate(Boolean exception) {
-        RestTemplate restTemplate = new RestTemplate();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(connectTimeout);
+        requestFactory.setReadTimeout(readTimeout);
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
         if (!exception) {
             restTemplate.setErrorHandler(new ResponseErrorHandler() {
                 @Override
