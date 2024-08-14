@@ -21,8 +21,15 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
             logRequest(request, body, log::debug);
         }
         //BufferingClientHttpResponseWrapper response = new BufferingClientHttpResponseWrapper(execution.execute(request, body));
-        ClientHttpResponse response = execution.execute(request, body);
-        Assert.isTrue(response.getClass().getName().equals("org.springframework.http.client.BufferingClientHttpResponseWrapper"));
+        ClientHttpResponse response;
+        try {
+            response = execution.execute(request, body);
+            Assert.isTrue(response.getClass().getName().equals("org.springframework.http.client.BufferingClientHttpResponseWrapper"));
+        } catch (Exception ex) {
+            log.error("Exception when seng request", ex);
+            logRequest(request, body, log::error);
+            throw ex;
+        }
         if (log.isDebugEnabled()) {
             logResponse(response, log::debug);
         }
