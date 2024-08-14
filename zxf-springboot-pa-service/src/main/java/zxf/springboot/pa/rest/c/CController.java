@@ -21,6 +21,6 @@ public class CController {
     @GetMapping("/json")
     public ResponseEntity<Map<String, Object>> json(@RequestParam Integer task) throws InterruptedException {
         log.info("::json");
-        return PAService.result(task, "C");
+        return PAService.result(task, "PA.C");
     }
 }

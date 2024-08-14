@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import zxf.springboot.pa.request.TaskRequest;
 import zxf.springboot.pa.service.PAService;
 
 import java.util.Collections;
@@ -25,9 +23,9 @@ public class AController {
         log.info("::ctor");
     }
 
-    @GetMapping("/json")
-    public ResponseEntity<Map<String, Object>> json(@RequestParam Integer task) throws InterruptedException {
+    @PostMapping("/json")
+    public ResponseEntity<Map<String, Object>> json(@RequestBody TaskRequest taskRequest) throws InterruptedException {
         log.info("::json");
-        return PAService.result(task, "A");
+        return PAService.result(taskRequest.getTask(), "PA.A");
     }
 }

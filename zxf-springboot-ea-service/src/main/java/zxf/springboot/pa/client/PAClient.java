@@ -2,6 +2,7 @@ package zxf.springboot.pa.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,11 +32,26 @@ public class PAClient {
     @Value("${pa-service.readTimeout}")
     private Integer readTimeout;
 
-    public Map<String, Object> callDownstreamSync(String path, Boolean exception) {
+    public Map<String, Object> callDownstreamSyncByGet(String path, Boolean exception) {
         try {
             log.info("::callDownstreamSync START, path={}", path);
             Map<String, Object> result = createRestTemplate(exception).getForObject(URI.create(baseUrl + path), Map.class);
             log.info("::callDownstreamSync END, path={}, result={}", path, result);
+            return result;
+        } catch (Throwable ex) {
+            log.error("Exception when call downstream api.", ex);
+            throw ex;
+        }
+    }
+
+    public Map<String, Object> callDownstreamSyncByPost(String path, Object body, Boolean exception) {
+        try {
+            log.info("::callDownstreamSync START, path={}, body={}", path, body);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            RequestEntity<Object> requestEntity = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(baseUrl + path));
+            Map<String, Object> result = createRestTemplate(exception).exchange(requestEntity, Map.class).getBody();
+            log.info("::callDownstreamSync END, path={}, body={}, result={}", path, body, result);
             return result;
         } catch (Throwable ex) {
             log.error("Exception when call downstream api.", ex);
@@ -61,7 +78,7 @@ public class PAClient {
             });
         }
         restTemplate.setInterceptors(List.of((request, body, execution) -> {
-            log.info("Request body: {}", new String(body, StandardCharsets.UTF_8));
+            log.info("Request, method: {}, path: {}, headers: {}, body: {}", request.getMethod(), request.getURI(), request.getHeaders(), new String(body, StandardCharsets.UTF_8));
             ClientHttpResponse response = execution.execute(request, body);
 //            InputStreamReader isr = new InputStreamReader(response.getBody(), StandardCharsets.UTF_8);
 //            String responseBody = new BufferedReader(isr).lines().collect(Collectors.joining("\n"));

@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/pa/a/json",
+    "bodyPatterns": [
+      {
+        "equalToJson": {
+          "task": 400
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": 400
+  }
+}

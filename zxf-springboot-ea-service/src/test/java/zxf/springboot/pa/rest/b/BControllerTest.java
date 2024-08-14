@@ -32,13 +32,13 @@ public class BControllerTest {
     void testJson() throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json?task=200");
-        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSync(eq("/pa/b/json?task=200"), eq(true));
+        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet(eq("/pa/b/json?task=200"), eq(true));
 
         //When
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"B-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", mvcResult.getResponse().getContentAsString(), true);
-        Mockito.verify(paClient).callDownstreamSync(eq("/pa/b/json?task=200"), eq(true));
+        JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", mvcResult.getResponse().getContentAsString(), true);
+        Mockito.verify(paClient).callDownstreamSyncByGet(eq("/pa/b/json?task=200"), eq(true));
     }
 }

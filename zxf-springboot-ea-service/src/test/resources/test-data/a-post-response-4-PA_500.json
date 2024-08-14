@@ -1,0 +1,6 @@
+{
+  "timestamp": "2024-08-14T01:46:13.718+00:00",
+  "status": 500,
+  "error": "Internal Server Error",
+  "path": "/a/json"
+}

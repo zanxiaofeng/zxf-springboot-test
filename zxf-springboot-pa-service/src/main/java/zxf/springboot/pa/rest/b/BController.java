@@ -23,6 +23,6 @@ public class BController {
     @GetMapping("/json")
     public ResponseEntity<Map<String, Object>> json(@RequestParam Integer task) throws InterruptedException {
         log.info("::json");
-        return PAService.result(task, "B");
+        return PAService.result(task, "PA.B");
     }
 }
