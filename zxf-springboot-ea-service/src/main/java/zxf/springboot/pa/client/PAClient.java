@@ -6,6 +6,7 @@ import org.springframework.http.*;
 import org.springframework.http.client.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -61,7 +62,7 @@ public class PAClient {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(connectTimeout);
         requestFactory.setReadTimeout(readTimeout);
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(requestFactory));
         if (!exception) {
             restTemplate.setErrorHandler(new ResponseErrorHandler() {
                 @Override
@@ -83,7 +84,9 @@ public class PAClient {
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
             logRequest(request, body);
-            BufferingClientHttpResponseWrapper response = new BufferingClientHttpResponseWrapper(execution.execute(request, body));
+            //BufferingClientHttpResponseWrapper response = new BufferingClientHttpResponseWrapper(execution.execute(request, body));
+            ClientHttpResponse response = execution.execute(request, body);
+            Assert.isTrue(response.getClass().getName().equals("org.springframework.http.client.BufferingClientHttpResponseWrapper"));
             logResponse(response);
             return response;
         }

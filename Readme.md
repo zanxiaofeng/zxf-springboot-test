@@ -151,3 +151,7 @@
 # Static vs. instance of Wiremock
 - with the declarative form, each WireMock server will be started before the first test method in the test class and stopped after the last test method has completed, with a call to reset before each test method.
 - However, if the extension fields are declared at the instance scope (without the static modifier) each WireMock server will be created and started before each test method and stopped after the end of the test method.
+
+# how to log request and response in ClientHttpRequestInterceptor
+1. Using BufferingClientHttpRequestFactory
+2. Using BufferingClientHttpResponseWrapper
