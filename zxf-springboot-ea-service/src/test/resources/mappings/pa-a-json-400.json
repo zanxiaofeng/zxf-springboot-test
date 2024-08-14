@@ -2,6 +2,11 @@
   "request": {
     "method": "POST",
     "url": "/pa/a/json",
+    "headers": {
+      "Content-Type": {
+        "equalTo": "application/json"
+      }
+    },
     "bodyPatterns": [
       {
         "equalToJson": {
