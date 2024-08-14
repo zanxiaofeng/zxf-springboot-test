@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WireMockTest(httpPort = 8089)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
-@TestPropertySource(properties = {"pa-service.url=http://localhost:8089"})
 public class ApiTestsWithMockModeTest {
     @Autowired
     MockMvc mockMvc;

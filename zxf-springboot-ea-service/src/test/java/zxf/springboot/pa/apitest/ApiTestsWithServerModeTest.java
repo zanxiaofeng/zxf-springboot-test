@@ -33,9 +33,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WireMockTest(httpPort = 8089)
+@WireMockTest(httpPort = 8090)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@TestPropertySource(properties = {"pa-service.url=http://localhost:8089"})
+@TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
 public class ApiTestsWithServerModeTest {
     @Autowired
     TestRestTemplate testRestTemplate;
