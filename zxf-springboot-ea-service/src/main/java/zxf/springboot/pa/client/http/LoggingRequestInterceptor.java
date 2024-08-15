@@ -1,4 +1,4 @@
-package zxf.springboot.pa.client;
+package zxf.springboot.pa.client.http;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;

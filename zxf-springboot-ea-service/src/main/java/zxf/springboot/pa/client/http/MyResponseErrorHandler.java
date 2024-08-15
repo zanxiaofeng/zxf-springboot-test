@@ -1,4 +1,4 @@
-package zxf.springboot.pa.client;
+package zxf.springboot.pa.client.http;
 
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
