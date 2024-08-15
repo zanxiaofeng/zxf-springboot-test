@@ -1,16 +1,16 @@
 package zxf.springboot.pa.client.http;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Component
 public class RestTemplateFactory {
-    @Autowired
-    private ClientHttpRequestFactory clientHttpRequestFactory;
+    private final ClientHttpRequestFactory clientHttpRequestFactory;
+
+    public RestTemplateFactory(ClientHttpRequestFactory clientHttpRequestFactory) {
+        this.clientHttpRequestFactory = clientHttpRequestFactory;
+    }
 
     public RestTemplate basicRestTemplate(Boolean exceptionable) {
         RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
