@@ -133,8 +133,9 @@
 - org.springframework.web.client.HttpMessageConverterExtractor<T>[ResponseEntity<T>]
 - org.springframework.web.client.RequestCallback[interface]
 - org.springframework.web.util.UriTemplateHandler[interface]
-- import org.springframework.util.Assert;
-- import org.springframework.util.ClassUtils;
+- org.springframework.web.util.WebUtils
+- org.springframework.util.Assert;
+- org.springframework.util.ClassUtils;
 
 # Core classes of mockito
 - org.mockito.Mockito
@@ -157,3 +158,8 @@
 # how to log request and response in ClientHttpRequestInterceptor
 1. Using BufferingClientHttpRequestFactory
 2. Using BufferingClientHttpResponseWrapper
+
+# Java Contract Programming
+- org.springframework.util.Assert
+- com.google.common.base.Preconditions
+- java.util.Objects.require***
