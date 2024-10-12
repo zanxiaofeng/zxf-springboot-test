@@ -133,6 +133,8 @@
 - org.springframework.web.client.HttpMessageConverterExtractor<T>[ResponseEntity<T>]
 - org.springframework.web.client.RequestCallback[interface]
 - org.springframework.web.util.UriTemplateHandler[interface]
+- import org.springframework.util.Assert;
+- import org.springframework.util.ClassUtils;
 
 # Core classes of mockito
 - org.mockito.Mockito
