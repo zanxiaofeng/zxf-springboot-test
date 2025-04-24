@@ -34,22 +34,12 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @WireMockTest(httpPort = 8090)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
+@Sql(scripts = {"/sql/cleanup/clean-up.sql","/sql/init/schema.sql", "/sql/init/data.sql"})
 public class ApiTestsWithServerModeTest {
     @Autowired
     TestRestTemplate testRestTemplate;
     String requestTemplate;
     JSONComparator jsonComparator;
-
-    @BeforeAll
-    static void setupForAll() throws IOException {
-        log.info("Before all");
-    }
-
-    @AfterAll
-    @Sql(scripts = {"/sql/cases/clean-up.sql"})
-    static void cleanUpForAll() throws IOException {
-        log.info("After all");
-    }
 
     @BeforeEach
     void setupForEach() throws IOException {

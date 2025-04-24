@@ -6,10 +6,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -36,22 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WireMockTest(httpPort = 8089)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
+@Sql(scripts = {"/sql/cleanup/clean-up.sql","/sql/init/schema.sql", "/sql/init/data.sql"})
 public class ApiTestsWithMockModeTest {
     @Autowired
     MockMvc mockMvc;
     String requestTemplate;
     JSONComparator jsonComparator;
-
-    @BeforeAll
-    static void setupForAll() throws IOException {
-        log.info("Before all");
-    }
-
-    @AfterAll
-    @Sql(scripts = {"/sql/cases/clean-up.sql"})
-    static void cleanUpForAll() throws IOException {
-        log.info("After all");
-    }
 
     @BeforeEach
     void setupForEach() throws IOException {
@@ -59,7 +46,7 @@ public class ApiTestsWithMockModeTest {
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 Customization.customization("**.downstream.value",
                         new RegularExpressionValueMatcher<>("\\d+")));
-        log.info("Before each");
+        log.info("***************************Before each***************************");
     }
 
     @Test
