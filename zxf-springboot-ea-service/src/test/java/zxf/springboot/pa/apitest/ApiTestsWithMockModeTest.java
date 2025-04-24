@@ -4,13 +4,12 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -20,21 +19,20 @@ import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.util.NestedServletException;
 
 import java.io.IOException;
-import java.net.URI;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @WireMockTest(httpPort = 8089)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
@@ -44,18 +42,61 @@ public class ApiTestsWithMockModeTest {
     String requestTemplate;
     JSONComparator jsonComparator;
 
+    @BeforeAll
+    static void setupForAll() throws IOException {
+        log.info("Before all");
+    }
+
+    @AfterAll
+    @Sql(scripts = {"/sql/cases/clean-up.sql"})
+    static void cleanUpForAll() throws IOException {
+        log.info("After all");
+    }
+
     @BeforeEach
-    void setup() throws IOException {
+    void setupForEach() throws IOException {
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 Customization.customization("**.downstream.value",
                         new RegularExpressionValueMatcher<>("\\d+")));
+        log.info("Before each");
     }
 
     @Test
-    void testA_PA_200() throws Exception {
+    void testA_PA_200_with_projectId_p_1() throws Exception {
         //Given
-        String requestBody = requestTemplate.replace("{{task}}", "200");
+        String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "\"p-1\"");
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
+                .content(requestBody).contentType("application/json");
+
+        //When
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+
+        //Then
+        String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200-with-project-p-1.json", Charsets.UTF_8);
+        JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
+    }
+
+    @Test
+    @Sql(scripts = {"/sql/cases/project-p-test.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    void testA_PA_200_with_projectId_p_test() throws Exception {
+        //Given
+        String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "\"p-test\"");
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
+                .content(requestBody).contentType("application/json");
+
+        //When
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+
+        //Then
+        String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200-with-project-p-test.json", Charsets.UTF_8);
+        JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
+    }
+
+    @Test
+    void testA_PA_200_without_projectId() throws Exception {
+        //Given
+        String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "null");
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
                 .content(requestBody).contentType("application/json");
 
@@ -70,7 +111,8 @@ public class ApiTestsWithMockModeTest {
     //@Test
     void testA_PA_505() throws Exception {
         //Given
-        String requestBody = requestTemplate.replace("{{task}}", "505");
+        String requestBody = requestTemplate.replace("{{task}}", "505").replace("{{projectId}}", "null");
+        ;
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
                 .content(requestBody).contentType("application/json");
 

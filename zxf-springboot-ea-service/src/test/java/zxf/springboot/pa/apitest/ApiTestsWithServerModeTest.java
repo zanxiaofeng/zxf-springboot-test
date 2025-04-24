@@ -4,11 +4,10 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.skyscreamer.jsonassert.Customization;
@@ -22,17 +21,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 
 import java.io.IOException;
 import java.net.URI;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @WireMockTest(httpPort = 8090)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
@@ -42,8 +40,19 @@ public class ApiTestsWithServerModeTest {
     String requestTemplate;
     JSONComparator jsonComparator;
 
+    @BeforeAll
+    static void setupForAll() throws IOException {
+        log.info("Before all");
+    }
+
+    @AfterAll
+    @Sql(scripts = {"/sql/cases/clean-up.sql"})
+    static void cleanUpForAll() throws IOException {
+        log.info("After all");
+    }
+
     @BeforeEach
-    void setup() throws IOException {
+    void setupForEach() throws IOException {
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);
         Customization timestamp = Customization.customization("timestamp",
                 new RegularExpressionValueMatcher<>("[\\d T:.+-]+"));
@@ -51,15 +60,16 @@ public class ApiTestsWithServerModeTest {
                 new RegularExpressionValueMatcher<>("\\d+"));
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 downstream, timestamp);
+        log.info("Before each");
     }
 
     @ParameterizedTest(name = "for PA-{0}")
-    @CsvSource({"200,200,a-post-response-4-PA_200.json","400,500,a-post-response-4-PA_400.json"
-            ,"500,500,a-post-response-4-PA_500.json","503,500,a-post-response-4-PA_503.json"})
-    void testAForParameterizedTest(String task, Integer status, String responseFile) throws Exception {
+    @CsvSource({"200,200,a-post-response-4-PA_200.json", "400,500,a-post-response-4-PA_400.json"
+            , "500,500,a-post-response-4-PA_500.json", "503,500,a-post-response-4-PA_503.json"})
+    void testAWithoutProjectIdForParameterizedTest(String task, Integer status, String responseFile) throws Exception {
         //Given
         String requestUrl = "/a/json";
-        String requestBody = requestTemplate.replace("{{task}}", task);
+        String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "null");
 
         //When
         HttpHeaders headers = new HttpHeaders();
@@ -72,6 +82,27 @@ public class ApiTestsWithServerModeTest {
         Assertions.assertEquals(status, response.getStatusCodeValue());
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
+
+    @ParameterizedTest(name = "for PA-{0} with project {1}")
+    @Sql(scripts = {"/sql/cases/project-p-test.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = SqlConfig.TransactionMode.ISOLATED))
+    @CsvSource({"200,p-1,200,a-post-response-4-PA_200-with-project-p-1.json", "200,p-test,200,a-post-response-4-PA_200-with-project-p-test.json"})
+    void testAWithProjectIdForParameterizedTest(String task, String projectId, Integer status, String responseFile) throws Exception {
+        //Given
+        String requestUrl = "/a/json";
+        String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "\"" + projectId + "\"");
+
+        //When
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        RequestEntity<Object> requestEntity = new RequestEntity<>(requestBody, headers, HttpMethod.POST, URI.create(requestUrl));
+        ResponseEntity<String> response = testRestTemplate.exchange(requestEntity, String.class);
+
+        //Then
+        String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
+        Assertions.assertEquals(status, response.getStatusCodeValue());
+        JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
+    }
+
 
     @Test
     void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
