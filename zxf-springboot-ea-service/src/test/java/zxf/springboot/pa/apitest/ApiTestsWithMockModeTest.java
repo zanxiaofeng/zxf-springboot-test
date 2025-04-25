@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.junit.jupiter.api.*;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -46,7 +48,7 @@ public class ApiTestsWithMockModeTest {
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 Customization.customization("**.downstream.value",
                         new RegularExpressionValueMatcher<>("\\d+")));
-        log.info("***************************Before each***************************");
+        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
     }
 
     @Test

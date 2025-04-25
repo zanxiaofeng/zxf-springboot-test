@@ -1,5 +1,8 @@
 package zxf.springboot.pa.rest.c;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.ProcessIdUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -15,11 +18,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import zxf.springboot.pa.client.PAClient;
 import zxf.springboot.pa.service.PAService;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @WebMvcTest(CController.class)
 @TestPropertySource("/c.properties")
 public class CControllerTest {
@@ -29,6 +34,11 @@ public class CControllerTest {
     PAService paService;
     @MockBean
     PAClient paClient;
+
+    @BeforeEach
+    void setupForEach() throws IOException {
+        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @Test
     void testJson() throws Exception {

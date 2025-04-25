@@ -1,6 +1,9 @@
 package zxf.springboot.pa.rest;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,14 +13,22 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.IOException;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //Start with default webEnvironment SpringBootTest.WebEnvironment.MOCK
+@Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
 public class HomeControllerTest {
     @Autowired
     MockMvc mockMvc;
+
+    @BeforeEach
+    void setupForEach() throws IOException {
+        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @Test
     void testGreeting() throws Exception {

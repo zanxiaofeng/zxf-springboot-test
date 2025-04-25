@@ -1,6 +1,9 @@
 package zxf.springboot.pa.rest.a;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -12,12 +15,14 @@ import org.springframework.http.*;
 import zxf.springboot.pa.client.PAClient;
 import zxf.springboot.pa.rest.request.TaskRequest;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+@Slf4j
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class AControllerTest {
     @Autowired
@@ -25,6 +30,11 @@ class AControllerTest {
 
     @SpyBean
     PAClient paClient;
+
+    @BeforeEach
+    void setupForEach() throws IOException {
+        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @Test
     void testJson() throws Exception {

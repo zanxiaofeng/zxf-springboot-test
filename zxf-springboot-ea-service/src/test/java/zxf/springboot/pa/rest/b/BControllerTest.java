@@ -1,6 +1,8 @@
 package zxf.springboot.pa.rest.b;
 
-import org.junit.jupiter.api.Assertions;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.ProcessIdUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -14,12 +16,14 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import zxf.springboot.pa.client.PAClient;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
 public class BControllerTest {
@@ -27,6 +31,11 @@ public class BControllerTest {
     MockMvc mockMvc;
     @MockBean
     PAClient paClient;
+
+    @BeforeEach
+    void setupForEach() throws IOException {
+        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @Test
     void testJson() throws Exception {

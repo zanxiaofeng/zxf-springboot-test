@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.json.JSONException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,6 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URI;
 
@@ -34,7 +36,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @WireMockTest(httpPort = 8090)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
-@Sql(scripts = {"/sql/cleanup/clean-up.sql","/sql/init/schema.sql", "/sql/init/data.sql"})
+@Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
 public class ApiTestsWithServerModeTest {
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -50,7 +52,7 @@ public class ApiTestsWithServerModeTest {
                 new RegularExpressionValueMatcher<>("\\d+"));
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 downstream, timestamp);
-        log.info("Before each");
+        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
     }
 
     @ParameterizedTest(name = "for PA-{0}")
