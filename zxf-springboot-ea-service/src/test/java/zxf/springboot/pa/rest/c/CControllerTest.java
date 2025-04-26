@@ -2,6 +2,7 @@ package zxf.springboot.pa.rest.c;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.ProcessIdUtil;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,6 +35,15 @@ public class CControllerTest {
     PAService paService;
     @MockBean
     PAClient paClient;
+
+    public CControllerTest() {
+        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+    }
+
+    @BeforeAll
+    static void setupForAll() throws IOException {
+        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @BeforeEach
     void setupForEach() throws IOException {

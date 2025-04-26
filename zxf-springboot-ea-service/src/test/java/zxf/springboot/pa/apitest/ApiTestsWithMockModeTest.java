@@ -35,12 +35,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WireMockTest(httpPort = 8089)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
-@Sql(scripts = {"/sql/cleanup/clean-up.sql","/sql/init/schema.sql", "/sql/init/data.sql"})
+@Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
 public class ApiTestsWithMockModeTest {
     @Autowired
     MockMvc mockMvc;
     String requestTemplate;
     JSONComparator jsonComparator;
+
+    public ApiTestsWithMockModeTest() {
+        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+    }
+
+    @BeforeAll
+    static void setupForAll() throws IOException {
+        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @BeforeEach
     void setupForEach() throws IOException {

@@ -43,6 +43,15 @@ public class ApiTestsWithServerModeTest {
     String requestTemplate;
     JSONComparator jsonComparator;
 
+    public ApiTestsWithServerModeTest() {
+        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+    }
+
+    @BeforeAll
+    static void setupForAll() throws IOException {
+        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+    }
+
     @BeforeEach
     void setupForEach() throws IOException {
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);

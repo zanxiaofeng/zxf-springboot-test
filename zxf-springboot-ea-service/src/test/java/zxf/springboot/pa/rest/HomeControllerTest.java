@@ -3,6 +3,7 @@ package zxf.springboot.pa.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class HomeControllerTest {
     @Autowired
     MockMvc mockMvc;
+
+    public HomeControllerTest() {
+        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+    }
+
+    @BeforeAll
+    static void setupForAll() throws IOException {
+        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+    }
 
     @BeforeEach
     void setupForEach() throws IOException {
