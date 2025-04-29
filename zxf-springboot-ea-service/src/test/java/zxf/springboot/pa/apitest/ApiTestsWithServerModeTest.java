@@ -25,7 +25,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URI;
 
@@ -59,8 +58,10 @@ public class ApiTestsWithServerModeTest {
                 new RegularExpressionValueMatcher<>("[\\d T:.+-]+"));
         Customization downstream = Customization.customization("**.downstream.value",
                 new RegularExpressionValueMatcher<>("\\d+"));
+        Customization currentTimeMillis = Customization.customization("currentTimeMillis",
+                new RegularExpressionValueMatcher<>("\\d+"));
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
-                downstream, timestamp);
+                timestamp, downstream, currentTimeMillis);
         log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
     }
 
@@ -140,7 +141,7 @@ public class ApiTestsWithServerModeTest {
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
-        JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"}}", response.getBody(), jsonComparator);
+        JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
 
     @Test
@@ -159,6 +160,6 @@ public class ApiTestsWithServerModeTest {
         //Then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
-        JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"}}", response.getBody(), true);
+        JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
 }

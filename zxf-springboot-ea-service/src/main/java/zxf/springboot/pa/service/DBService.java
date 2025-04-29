@@ -16,6 +16,10 @@ public class DBService {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    public DBService() {
+        log.info("::ctor");
+    }
+
     public Map<String, Object> queryProjectById(String projectId) {
         String query = "SELECT * FROM PROJECT WHERE ID=:projectId";
         log.info("queryProjectById:: query={}, parameters={}", query, projectId);

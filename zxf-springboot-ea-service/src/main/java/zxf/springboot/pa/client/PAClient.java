@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,10 @@ public class PAClient {
     @Autowired
     @Qualifier("internalCallClientHttpRequestFactory")
     private ClientHttpRequestFactory internalCallClientHttpRequestFactory;
+
+    public PAClient() {
+        log.info("::ctor");
+    }
 
     public Map<String, Object> callDownstreamSyncByGet(String path, Boolean exception) {
         try {

@@ -1,7 +1,3 @@
-# Bean Mock
-- @MockBean
-- @SpyBean
-
 # 集成测试
 ## 启用
 - 集成测试使用@SpringBootTest注解来加载所有的bean，　使用＠ＭockＢean或＠ＳpyＢean来替换指定的Ｂean，使用Mock或Running Server并配合相应的工具类完成测试
@@ -26,6 +22,20 @@
 - Hamcrest
 - Assertj
 - JSONAssert(JSONPath)
+
+# Rest api test
+- Rest-assured
+
+# SpringBoot-Test + Mockito Mock
+- @SpringBootTest(classes = {*****})
+- @Autowired
+- @MockBean
+- @SpyBean
+
+# Mockito Mock
+- @InjectMocks
+- @Mock
+- @Spy
 
 # Core classes of Junit5
 - org.junit.jupiter.api.Test@

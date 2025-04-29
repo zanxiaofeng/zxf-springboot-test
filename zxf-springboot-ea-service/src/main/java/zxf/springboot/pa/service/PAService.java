@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import zxf.springboot.pa.client.PAClient;
 import zxf.springboot.pa.rest.request.TaskRequest;
+import zxf.springboot.pa.utils.SystemUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class PAService {
         Map<String, Object> json = new HashMap<>();
         json.put("task", "EA.C-" + task);
         json.put("downstream", paClient.callDownstreamSyncByGet("/pa/c/json?task=" + task, false));
+        json.put("currentTimeMillis", SystemUtils.currentTimeMillis());
         return json;
     }
 }

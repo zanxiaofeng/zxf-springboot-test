@@ -1,5 +1,6 @@
 package zxf.springboot.pa.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,7 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
+@Slf4j
 @Configuration
 public class ClientHttpRequestFactoryConfiguration {
     @Value("${internal-call.connectTimeout}")
@@ -20,6 +22,10 @@ public class ClientHttpRequestFactoryConfiguration {
 
     @Value("${external-call.readTimeout}")
     private Integer externalCallReadTimeout;
+
+    public ClientHttpRequestFactoryConfiguration() {
+        log.info("::ctor");
+    }
 
     @Bean("internalCallClientHttpRequestFactory")
     public ClientHttpRequestFactory internalCallClientHttpRequestFactory() {

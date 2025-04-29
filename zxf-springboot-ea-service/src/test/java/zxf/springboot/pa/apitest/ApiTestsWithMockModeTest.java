@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -56,8 +55,25 @@ public class ApiTestsWithMockModeTest {
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 Customization.customization("**.downstream.value",
+                        new RegularExpressionValueMatcher<>("\\d+")),
+                Customization.customization("currentTimeMillis",
                         new RegularExpressionValueMatcher<>("\\d+")));
         log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+    }
+
+    @Test
+    void testA_PA_200_without_projectId() throws Exception {
+        //Given
+        String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "null");
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
+                .content(requestBody).contentType("application/json");
+
+        //When
+        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+
+        //Then
+        String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200.json", Charsets.UTF_8);
+        JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
     }
 
     @Test
@@ -91,26 +107,10 @@ public class ApiTestsWithMockModeTest {
         JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
     }
 
-    @Test
-    void testA_PA_200_without_projectId() throws Exception {
-        //Given
-        String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "null");
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
-                .content(requestBody).contentType("application/json");
-
-        //When
-        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
-
-        //Then
-        String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200.json", Charsets.UTF_8);
-        JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
-    }
-
     //@Test
     void testA_PA_505() throws Exception {
         //Given
         String requestBody = requestTemplate.replace("{{task}}", "505").replace("{{projectId}}", "null");
-        ;
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
                 .content(requestBody).contentType("application/json");
 
@@ -154,7 +154,7 @@ public class ApiTestsWithMockModeTest {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"}}", mvcResult.getResponse().getContentAsString(), jsonComparator);
+        JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", mvcResult.getResponse().getContentAsString(), jsonComparator);
     }
 
     @Test
@@ -171,6 +171,6 @@ public class ApiTestsWithMockModeTest {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"}}", mvcResult.getResponse().getContentAsString(), true);
+        JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"},\"currentTimeMillis\":123456789}", mvcResult.getResponse().getContentAsString(), jsonComparator);
     }
 }

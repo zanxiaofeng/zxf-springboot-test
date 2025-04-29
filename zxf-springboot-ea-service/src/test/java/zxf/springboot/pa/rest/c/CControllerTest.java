@@ -5,6 +5,7 @@ import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import zxf.springboot.pa.client.PAClient;
 import zxf.springboot.pa.service.PAService;
+import zxf.springboot.pa.utils.SystemUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -52,15 +54,18 @@ public class CControllerTest {
 
     @Test
     void testJson() throws Exception {
-        //Given
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
-        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet(eq("/pa/c/json?task=200"), eq(false));
+        try(MockedStatic<SystemUtils> systemUtilsMockedStatic = Mockito.mockStatic(SystemUtils.class)) {
+            //Given
+            RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
+            Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet(eq("/pa/c/json?task=200"), eq(false));
+            systemUtilsMockedStatic.when(()-> SystemUtils.currentTimeMillis()).thenReturn(123456789L);
 
-        //When
-        MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+            //When
+            MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
-        //Then
-        JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", mvcResult.getResponse().getContentAsString(), true);
-        Mockito.verify(paClient).callDownstreamSyncByGet(eq("/pa/c/json?task=200"), eq(false));
+            //Then
+            JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"currentTimeMillis\":123456789}", mvcResult.getResponse().getContentAsString(), true);
+            Mockito.verify(paClient).callDownstreamSyncByGet(eq("/pa/c/json?task=200"), eq(false));
+        }
     }
 }
