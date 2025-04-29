@@ -1,4 +1,4 @@
-package zxf.springboot.pa.apitest;
+package zxf.springboot.pa.apitest.springboot;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
