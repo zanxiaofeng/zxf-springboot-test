@@ -39,7 +39,6 @@
 
 # Core classes of Junit5
 - org.junit.jupiter.api.Test@
-- org.junit.jupiter.api.Assertions;
 - org.junit.jupiter.api.BeforeAll@
 - org.junit.jupiter.api.BeforeEach@
 - org.junit.jupiter.api.AfterAll@
@@ -50,22 +49,22 @@
 - org.junit.jupiter.params.provider.CsvSource@
 - org.junit.jupiter.params.provider.ValueSource@
 - org.junit.jupiter.api.extension.ExtendWith@
-- org.junit.jupiter.api.extension.AfterAllCallback;
-- org.junit.jupiter.api.extension.AfterEachCallback;
-- org.junit.jupiter.api.extension.BeforeAllCallback;
-- org.junit.jupiter.api.extension.BeforeEachCallback;
-- org.junit.jupiter.api.extension.ExtensionContext;
-- org.junit.jupiter.api.extension.ParameterContext;
-- org.junit.jupiter.api.extension.ParameterResolutionException;
-- org.junit.jupiter.api.extension.ParameterResolver;
-- org.junit.platform.commons.support.AnnotationSupport;
+- org.junit.jupiter.api.extension.Extension
+- org.mockito.junit.jupiter.MockitoExtension
+- org.springframework.test.context.junit.jupiter.SpringExtension
+- com.github.tomakehurst.wiremock.junit5.WireMockExtension
+- org.junit.jupiter.api.Assertions;
+
 
 # Core classes of Junit4
 - org.junit.Test@
 - org.junit.Before@
 - org.junit.Ignore@
-- org.junit.Assert
 - org.junit.runner.RunWith@
+- org.junit.runner.Runner
+- org.mockito.junit.MockitoJUnitRunner
+- org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+- org.junit.Assert
 
 # Core classes of Springboot test
 - org.springframework.boot.test.context.SpringBootTest@[Include @ExtendWith]
