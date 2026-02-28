@@ -1,18 +1,12 @@
 package zxf.springboot.pa.rest.a;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import zxf.springboot.pa.request.TaskRequest;
 import zxf.springboot.pa.service.PAService;
 
-import java.util.Collections;
 import java.util.Map;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestController
