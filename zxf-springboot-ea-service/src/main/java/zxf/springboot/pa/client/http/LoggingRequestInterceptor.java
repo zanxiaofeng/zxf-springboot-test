@@ -6,7 +6,6 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.util.Assert;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +20,10 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
         //BufferingClientHttpResponseWrapper response = new BufferingClientHttpResponseWrapper(execution.execute(request, body));
         try {
             ClientHttpResponse response = execution.execute(request, body);
-            Assert.isTrue(response.getClass().getName().equals("org.springframework.http.client.BufferingClientHttpResponseWrapper"), "Expected BufferingClientHttpResponseWrapper");
+            if (!response.getClass().getName().contains("BufferingClientHttpResponseWrapper")) {
+                log.warn("Response is not a BufferingClientHttpResponseWrapper ({}); body may not be re-readable for logging",
+                        response.getClass().getName());
+            }
 
             boolean isError = !response.getStatusCode().is2xxSuccessful();
             if (isError || log.isDebugEnabled()) {
@@ -31,7 +33,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
 
             return response;
         } catch (Exception ex) {
-            log.error("Exception when seng request", ex);
+            log.error("Exception when sending request", ex);
             logRequest(request, body, log::error);
             throw ex;
         }
@@ -40,7 +42,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
     private void logRequest(HttpRequest request, byte[] body, Consumer<String> logger) {
         logger.accept("=================================================Request begin=================================================");
         logger.accept("URI             : " + request.getURI());
-        logger.accept("Methed          : " + request.getMethod());
+        logger.accept("Method          : " + request.getMethod());
         logger.accept("Headers         : " + removeSensitiveHeaders(request.getHeaders()));
         logger.accept("Request Body    : " + new String(body, StandardCharsets.UTF_8));
         logger.accept("=================================================Request end=================================================");
@@ -50,7 +52,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
         logger.accept("=================================================Response begin=================================================");
         logger.accept("Status code     : " + response.getStatusCode().value());
         logger.accept("Status text     : " + response.getStatusCode().toString());
-        logger.accept("Headers         : " + response.getHeaders());
+        logger.accept("Headers         : " + removeSensitiveHeaders(response.getHeaders()));
         logger.accept("Response Body   : " + toString(response));
         logger.accept("=================================================Response end=================================================");
     }

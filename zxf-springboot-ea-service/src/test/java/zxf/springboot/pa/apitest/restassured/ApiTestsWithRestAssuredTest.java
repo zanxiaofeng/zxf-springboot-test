@@ -90,9 +90,8 @@ public class ApiTestsWithRestAssuredTest {
                 .statusCode(200)
                 .header(HttpHeaders.CONTENT_TYPE, Matchers.equalTo("application/json"))
                 .assertThat()
-                .body("task", Matchers.equalTo("EA.B-200"),
-                        "downstream.task", Matchers.equalTo("PA.B-200"),
-                        "downstream.value", Matchers.equalTo("1707039601565")
-                );
+                .body("task", Matchers.equalTo("EA.B-200"))
+                .body("downstream.task", Matchers.equalTo("PA.B-200"))
+                .body("downstream.value", Matchers.equalTo("1707039601565"));
     }
 }

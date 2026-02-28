@@ -17,8 +17,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
@@ -29,32 +27,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>11.0.18</version>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-bom</artifactId>
+                <version>6.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>8.0.33</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.wiremock</groupId>
-                <artifactId>wiremock</artifactId>
-                <version>3.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.24.2</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>6.0.0</version>
+                <artifactId>wiremock-jetty12</artifactId>
+                <version>3.13.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
