@@ -2,7 +2,6 @@ package zxf.springboot.pa.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.ProcessIdUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //Start with default webEnvironment SpringBootTest.WebEnvironment.MOCK
@@ -41,7 +41,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    void testGreeting() throws Exception {
+    void greeting() throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/");
 
@@ -49,6 +49,6 @@ public class HomeControllerTest {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        Assertions.assertEquals("Hello, World", mvcResult.getResponse().getContentAsString());
+        assertEquals("Hello, World", mvcResult.getResponse().getContentAsString());
     }
 }

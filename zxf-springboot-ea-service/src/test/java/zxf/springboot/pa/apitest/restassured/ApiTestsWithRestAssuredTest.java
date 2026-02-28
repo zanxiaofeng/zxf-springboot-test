@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.hamcrest.Matchers;
-import org.json.JSONException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,7 @@ public class ApiTestsWithRestAssuredTest {
     @ParameterizedTest(name = "for PA-{0}")
     @CsvSource({"200,200,a-post-response-4-PA_200.json", "400,500,a-post-response-4-PA_400.json"
             , "500,500,a-post-response-4-PA_500.json", "503,500,a-post-response-4-PA_503.json"})
-    void testAWithoutProjectIdForParameterizedTest(String task, Integer status, String responseFile) throws JSONException, IOException {
+    void aWithoutProjectIdForParameterizedTest(String task, Integer status, String responseFile) throws Exception {
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "null");
 
@@ -77,7 +76,7 @@ public class ApiTestsWithRestAssuredTest {
 
 
     @Test
-    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
+    void b(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         // Dynamic mock can be used as required in callback code
         WireMock wireMock = wireMockRuntimeInfo.getWireMock();
         wireMock.register(get("/pa/b/json?task=200").willReturn(ok("{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}")

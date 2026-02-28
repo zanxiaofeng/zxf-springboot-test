@@ -2,7 +2,6 @@ package zxf.springboot.pa.rest.a;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.ProcessIdUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -48,7 +48,7 @@ class AControllerTest {
     }
 
     @Test
-    void testJson() throws Exception {
+    void json() throws Exception {
         //Given
         String requestPath = "/a/json";
         String requestBody = "{\"task\": 200}";
@@ -61,8 +61,8 @@ class AControllerTest {
         ResponseEntity<String> response = testRestTemplate.exchange(requestEntity, String.class);
 
         //Then
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
         JSONAssert.assertEquals("{\"task\":\"EA.A-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", response.getBody(), true);
         Mockito.verify(paClient).callDownstreamSyncByPost(eq("/pa/a/json"), any(TaskRequest.class), eq(true));
     }

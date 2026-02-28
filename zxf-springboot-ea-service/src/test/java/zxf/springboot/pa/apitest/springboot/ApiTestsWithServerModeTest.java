@@ -7,8 +7,9 @@ import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
-import org.json.JSONException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.skyscreamer.jsonassert.Customization;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Slf4j
@@ -68,7 +70,7 @@ public class ApiTestsWithServerModeTest {
     @ParameterizedTest(name = "for PA-{0}")
     @CsvSource({"200,200,a-post-response-4-PA_200.json", "400,500,a-post-response-4-PA_400.json"
             , "500,500,a-post-response-4-PA_500.json", "503,500,a-post-response-4-PA_503.json"})
-    void testAWithoutProjectIdForParameterizedTest(String task, Integer status, String responseFile) throws Exception {
+    void aWithoutProjectIdForParameterizedTest(String task, Integer status, String responseFile) throws Exception {
         //Given
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "null");
@@ -81,14 +83,14 @@ public class ApiTestsWithServerModeTest {
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
-        Assertions.assertEquals(status, response.getStatusCodeValue());
+        assertEquals(status, response.getStatusCodeValue());
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
 
     @ParameterizedTest(name = "for PA-{0} with project {1}")
     @Sql(scripts = {"/sql/cases/project-p-test.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = SqlConfig.TransactionMode.ISOLATED))
     @CsvSource({"200,p-1,200,a-post-response-4-PA_200-with-project-p-1.json", "200,p-test,200,a-post-response-4-PA_200-with-project-p-test.json"})
-    void testAWithProjectIdForParameterizedTest(String task, String projectId, Integer status, String responseFile) throws Exception {
+    void aWithProjectIdForParameterizedTest(String task, String projectId, Integer status, String responseFile) throws Exception {
         //Given
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "\"" + projectId + "\"");
@@ -101,13 +103,13 @@ public class ApiTestsWithServerModeTest {
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
-        Assertions.assertEquals(status, response.getStatusCodeValue());
+        assertEquals(status, response.getStatusCodeValue());
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
 
 
     @Test
-    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
+    void b(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         String requestUrl = "/b/json?task=200";
 
@@ -120,13 +122,13 @@ public class ApiTestsWithServerModeTest {
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
 
         //Then
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
         JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"task\":\"PA.B-200\",\"value\":\"1707039601500\"}}", response.getBody(), jsonComparator);
     }
 
     @Test
-    void testC(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
+    void c(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         String requestUrl = "/c/json?task=200";
 
@@ -139,13 +141,13 @@ public class ApiTestsWithServerModeTest {
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
 
         //Then
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
         JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
 
     @Test
-    void testC400(WireMockRuntimeInfo wireMockRuntimeInfo) throws JSONException {
+    void c400(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         String requestUrl = "/c/json?task=400";
 
@@ -158,8 +160,8 @@ public class ApiTestsWithServerModeTest {
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
 
         //Then
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
         JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
 }

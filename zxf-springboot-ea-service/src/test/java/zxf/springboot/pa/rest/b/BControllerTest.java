@@ -20,7 +20,6 @@ import zxf.springboot.pa.client.PAClient;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.MOCK;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,16 +47,16 @@ public class BControllerTest {
     }
 
     @Test
-    void testJson() throws Exception {
+    void json() throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json?task=200");
-        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet(eq("/pa/b/json?task=200"), eq(true));
+        Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet("/pa/b/json?task=200", true);
 
         //When
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
         JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", mvcResult.getResponse().getContentAsString(), true);
-        Mockito.verify(paClient).callDownstreamSyncByGet(eq("/pa/b/json?task=200"), eq(true));
+        Mockito.verify(paClient).callDownstreamSyncByGet("/pa/b/json?task=200", true);
     }
 }

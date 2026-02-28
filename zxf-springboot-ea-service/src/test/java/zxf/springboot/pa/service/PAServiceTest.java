@@ -2,7 +2,9 @@ package zxf.springboot.pa.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.ProcessIdUtil;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import zxf.springboot.pa.utils.SystemUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @SpringBootTest(classes = {PAService.class})
@@ -39,28 +43,28 @@ public class PAServiceTest {
     }
 
     @Test
-    void testA() throws Exception {
+    void a() throws Exception {
         //Given
         TaskRequest taskRequest = new TaskRequest();
         taskRequest.setTask(200);
         Map<String, Object> result = new HashMap<>();
-        Mockito.when(paClient.callDownstreamSyncByPost(Mockito.eq("/pa/a/json"), Mockito.eq(taskRequest), Mockito.eq(false))).thenReturn(result);
+        Mockito.when(paClient.callDownstreamSyncByPost("/pa/a/json", taskRequest, false)).thenReturn(result);
 
         //When
         Map<String, Object> realResult = paService.a(taskRequest);
 
         //Then
-        Assertions.assertEquals(result, realResult.get("downstream"));
+        assertEquals(result, realResult.get("downstream"));
     }
 
 
     @Test
-    void testC() throws Exception {
+    void c() throws Exception {
         try(MockedStatic<SystemUtils> systemUtilsMockedStatic = Mockito.mockStatic(SystemUtils.class)) {
             //Given
             String taskId = "200";
             Map<String, Object> result = new HashMap<>();
-            Mockito.when(paClient.callDownstreamSyncByGet(Mockito.eq("/pa/c/json?task=" + taskId), Mockito.eq(false))).thenReturn(result);
+            Mockito.when(paClient.callDownstreamSyncByGet("/pa/c/json?task=" + taskId, false)).thenReturn(result);
             systemUtilsMockedStatic.when(()-> SystemUtils.currentTimeMillis()).thenReturn(123456789L);
 
 
@@ -68,8 +72,8 @@ public class PAServiceTest {
             Map<String, Object> realResult = paService.c(taskId);
 
             //Then
-            Assertions.assertEquals(result, realResult.get("downstream"));
-            Assertions.assertEquals(123456789L, realResult.get("currentTimeMillis"));
+            assertEquals(result, realResult.get("downstream"));
+            assertEquals(123456789L, realResult.get("currentTimeMillis"));
             systemUtilsMockedStatic.verify(()-> SystemUtils.currentTimeMillis());
         }
     }

@@ -37,6 +37,9 @@
                 <configuration>
                     <activeRecipes>
                         <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5</recipe>
+                        <recipe>org.openrewrite.java.testing.junit.JupiterBestPractices</recipe>
+                        <recipe>org.openrewrite.java.testing.junit5.JUnit5BestPractices</recipe>
+                        <recipe>org.openrewrite.java.testing.mockito.MockitoBestPractices</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>
@@ -44,6 +47,11 @@
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-spring</artifactId>
                         <version>6.24.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-testing-frameworks</artifactId>
+                        <version>3.28.0</version>
                     </dependency>
                 </dependencies>
             </plugin>

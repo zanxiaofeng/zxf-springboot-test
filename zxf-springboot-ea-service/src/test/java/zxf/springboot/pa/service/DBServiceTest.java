@@ -2,7 +2,6 @@ package zxf.springboot.pa.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.ProcessIdUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,8 @@ import zxf.springboot.pa.jdbc.ProjectRowMapper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +43,7 @@ public class DBServiceTest {
     }
 
     @Test
-    void testQueryProjectById() throws Exception {
+    void queryProjectById() throws Exception {
         //Given
         String projectId = "p-1";
         Map<String, Object> result = new HashMap<>();
@@ -53,6 +54,6 @@ public class DBServiceTest {
         Map<String, Object> realResult = dbService.queryProjectById(projectId);
 
         //Then
-        Assertions.assertEquals(result, realResult);
+        assertEquals(result, realResult);
     }
 }

@@ -34,7 +34,7 @@ public class SmokeTest {
     }
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
         assertThat(homeController).isNotNull();
     }
 }

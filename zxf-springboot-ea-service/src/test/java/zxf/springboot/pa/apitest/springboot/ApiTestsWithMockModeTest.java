@@ -62,7 +62,7 @@ public class ApiTestsWithMockModeTest {
     }
 
     @Test
-    void testA_PA_200_without_projectId() throws Exception {
+    void a_pa_200WithoutProjectId() throws Exception {
         //Given
         String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "null");
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
@@ -77,7 +77,7 @@ public class ApiTestsWithMockModeTest {
     }
 
     @Test
-    void testA_PA_200_with_projectId_p_1() throws Exception {
+    void a_pa_200WithProjectIdP1() throws Exception {
         //Given
         String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "\"p-1\"");
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
@@ -93,7 +93,7 @@ public class ApiTestsWithMockModeTest {
 
     @Test
     @Sql(scripts = {"/sql/cases/project-p-test.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = SqlConfig.TransactionMode.ISOLATED))
-    void testA_PA_200_with_projectId_p_test() throws Exception {
+    void a_pa_200WithProjectIdPTest() throws Exception {
         //Given
         String requestBody = requestTemplate.replace("{{task}}", "200").replace("{{projectId}}", "\"p-test\"");
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/a/json")
@@ -124,7 +124,7 @@ public class ApiTestsWithMockModeTest {
     }
 
     @Test
-    void testB(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void b(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/b/json?task=200");
 
@@ -141,7 +141,7 @@ public class ApiTestsWithMockModeTest {
     }
 
     @Test
-    void testC(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void c(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
 
@@ -158,7 +158,7 @@ public class ApiTestsWithMockModeTest {
     }
 
     @Test
-    void testC400(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void c400(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=400");
 

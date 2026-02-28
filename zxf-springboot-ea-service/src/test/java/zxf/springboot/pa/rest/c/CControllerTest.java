@@ -25,7 +25,6 @@ import zxf.springboot.pa.utils.SystemUtils;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
@@ -55,11 +54,11 @@ public class CControllerTest {
     }
 
     @Test
-    void testJson() throws Exception {
+    void json() throws Exception {
         try(MockedStatic<SystemUtils> systemUtilsMockedStatic = Mockito.mockStatic(SystemUtils.class)) {
             //Given
             RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/c/json?task=200");
-            Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet(eq("/pa/c/json?task=200"), eq(false));
+            Mockito.doReturn(Collections.singletonMap("abc", "in Mock Service")).when(paClient).callDownstreamSyncByGet("/pa/c/json?task=200", false);
             systemUtilsMockedStatic.when(()-> SystemUtils.currentTimeMillis()).thenReturn(123456789L);
 
             //When
@@ -67,7 +66,7 @@ public class CControllerTest {
 
             //Then
             JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"abc\":\"in Mock Service\"},\"currentTimeMillis\":123456789}", mvcResult.getResponse().getContentAsString(), true);
-            Mockito.verify(paClient).callDownstreamSyncByGet(eq("/pa/c/json?task=200"), eq(false));
+            Mockito.verify(paClient).callDownstreamSyncByGet("/pa/c/json?task=200", false);
         }
     }
 }
