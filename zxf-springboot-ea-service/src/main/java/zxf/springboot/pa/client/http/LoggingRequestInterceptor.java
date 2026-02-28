@@ -21,7 +21,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
         //BufferingClientHttpResponseWrapper response = new BufferingClientHttpResponseWrapper(execution.execute(request, body));
         try {
             ClientHttpResponse response = execution.execute(request, body);
-            Assert.isTrue(response.getClass().getName().equals("org.springframework.http.client.BufferingClientHttpResponseWrapper"));
+            Assert.isTrue(response.getClass().getName().equals("org.springframework.http.client.BufferingClientHttpResponseWrapper"), "Expected BufferingClientHttpResponseWrapper");
 
             boolean isError = !response.getStatusCode().is2xxSuccessful();
             if (isError || log.isDebugEnabled()) {
@@ -49,7 +49,7 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
     private void logResponse(ClientHttpResponse response, Consumer<String> logger) throws IOException {
         logger.accept("=================================================Response begin=================================================");
         logger.accept("Status code     : " + response.getStatusCode().value());
-        logger.accept("Status text     : " + response.getStatusCode().name());
+        logger.accept("Status text     : " + response.getStatusCode().toString());
         logger.accept("Headers         : " + response.getHeaders());
         logger.accept("Response Body   : " + toString(response));
         logger.accept("=================================================Response end=================================================");

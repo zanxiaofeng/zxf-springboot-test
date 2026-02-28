@@ -1,7 +1,7 @@
 package zxf.springboot.pa.client.http;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
@@ -21,13 +21,8 @@ public class BufferingClientHttpResponseWrapper implements ClientHttpResponse {
     }
 
     @Override
-    public HttpStatus getStatusCode() throws IOException {
+    public HttpStatusCode getStatusCode() throws IOException {
         return this.response.getStatusCode();
-    }
-
-    @Override
-    public int getRawStatusCode() throws IOException {
-        return this.response.getRawStatusCode();
     }
 
     @Override
