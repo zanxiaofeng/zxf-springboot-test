@@ -23,13 +23,13 @@ public class RestTemplateFactory {
 
     public RestTemplate restTemplateWithBasicAuth(Boolean exceptionable, String username, String passwd) {
         RestTemplate basicRestTemplate = basicRestTemplate(exceptionable);
-        basicRestTemplate.getInterceptors().add(0, new BasicAuthenticationInterceptor(username, passwd));
+        basicRestTemplate.getInterceptors().addFirst(new BasicAuthenticationInterceptor(username, passwd));
         return basicRestTemplate;
     }
 
     public RestTemplate restTemplateWithTokenAuth(Boolean exceptionable, String token) {
         RestTemplate basicRestTemplate = basicRestTemplate(exceptionable);
-        basicRestTemplate.getInterceptors().add(0, new SetHeaderRequestInterceptor("X-Token", token));
+        basicRestTemplate.getInterceptors().addFirst(new SetHeaderRequestInterceptor("X-Token", token));
         return basicRestTemplate;
     }
 }

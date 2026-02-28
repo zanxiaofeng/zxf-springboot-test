@@ -11,6 +11,6 @@ import org.springframework.stereotype.Component;
 public class AppStartup implements ApplicationListener<ApplicationReadyEvent> {
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
-        log.info("***************************App started {}, {}, {}***************************", ProcessIdUtil.getProcessId(), event.getSpringApplication().getMainApplicationClass(), event.getTimeTaken());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).addArgument(() -> event.getSpringApplication().getMainApplicationClass()).addArgument(event.getTimeTaken()).log("***************************App started {}, {}, {}***************************");
     }
 }

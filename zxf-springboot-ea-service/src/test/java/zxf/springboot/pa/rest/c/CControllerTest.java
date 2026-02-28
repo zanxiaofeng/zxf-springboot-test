@@ -40,17 +40,17 @@ public class CControllerTest {
     PAClient paClient;
 
     public CControllerTest() {
-        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Ctor {}***************************");
     }
 
     @BeforeAll
     static void setupForAll() throws IOException {
-        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before all {}***************************");
     }
 
     @BeforeEach
     void setupForEach() throws IOException {
-        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before each {}***************************");
     }
 
     @Test

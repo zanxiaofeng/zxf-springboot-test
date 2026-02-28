@@ -45,12 +45,12 @@ public class ApiTestsWithServerModeTest {
     JSONComparator jsonComparator;
 
     public ApiTestsWithServerModeTest() {
-        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Ctor {}***************************");
     }
 
     @BeforeAll
     static void setupForAll() throws IOException {
-        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before all {}***************************");
     }
 
     @BeforeEach
@@ -64,7 +64,7 @@ public class ApiTestsWithServerModeTest {
                 new RegularExpressionValueMatcher<>("\\d+"));
         jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
                 timestamp, downstream, currentTimeMillis);
-        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before each {}***************************");
     }
 
     @ParameterizedTest(name = "for PA-{0}")

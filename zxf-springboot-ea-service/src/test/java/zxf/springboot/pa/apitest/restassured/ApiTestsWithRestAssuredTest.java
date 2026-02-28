@@ -38,18 +38,18 @@ public class ApiTestsWithRestAssuredTest {
     private String requestTemplate;
 
     public ApiTestsWithRestAssuredTest() throws IOException {
-        log.info("***************************Ctor {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Ctor {}***************************");
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);
     }
 
     @BeforeAll
     static void setupForAll() throws IOException {
-        log.info("***************************Before all {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before all {}***************************");
     }
 
     @BeforeEach
     void setupForEach() throws IOException {
-        log.info("***************************Before each {}***************************", ProcessIdUtil.getProcessId());
+        log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before each {}***************************");
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = serverPort;
     }

@@ -24,6 +24,30 @@
         <module>zxf-springboot-pa-service</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-bom</artifactId>
+                <version>6.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wiremock</groupId>
+                <artifactId>wiremock-jetty12</artifactId>
+                <version>3.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openrewrite.recipe</groupId>
+                <artifactId>rewrite-recipe-bom</artifactId>
+                <version>3.22.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -40,38 +64,46 @@
                         <recipe>org.openrewrite.java.testing.junit.JupiterBestPractices</recipe>
                         <recipe>org.openrewrite.java.testing.junit5.JUnit5BestPractices</recipe>
                         <recipe>org.openrewrite.java.testing.mockito.MockitoBestPractices</recipe>
+                        <recipe>org.openrewrite.java.migrate.UpgradeToJava21</recipe>
+                        <recipe>org.openrewrite.java.jackson.JacksonBestPractices</recipe>
+                        <recipe>org.openrewrite.java.logging.slf4j.Slf4jBestPractices</recipe>
+                        <recipe>org.openrewrite.java.dependencies.DependencyResolutionDiagnostic</recipe>
+                        <recipe>org.openrewrite.java.dependencies.UpgradeDependencyVersion</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-spring</artifactId>
-                        <version>6.24.1</version>
+                        <version>6.22.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-testing-frameworks</artifactId>
-                        <version>3.28.0</version>
+                        <version>3.25.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-java-dependencies</artifactId>
+                        <version>1.49.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-jackson</artifactId>
+                        <version>1.14.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-logging-frameworks</artifactId>
+                        <version>3.21.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-java-dependencies</artifactId>
+                        <version>1.49.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
         </plugins>
     </build>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>rest-assured-bom</artifactId>
-                <version>6.0.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wiremock</groupId>
-                <artifactId>wiremock-jetty12</artifactId>
-                <version>3.13.0</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
