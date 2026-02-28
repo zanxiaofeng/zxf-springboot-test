@@ -56,8 +56,8 @@ Controller (rest/) → Service (service/) → Client (client/) → PA Service (H
 ```
 
 - **`client/PAClient`**: Makes HTTP calls to PA service using a custom-configured `RestTemplate`
-- **`client/http/`**: `RestTemplateFactory`, request interceptors for logging/headers, custom error handler, buffering response wrapper
-- **`configuration/ClientHttpRequestFactoryConfiguration`**: Configures separate timeouts for internal vs external HTTP calls (property-driven)
+- **`client/http/`**: `RestTemplateFactory`, `LoggingRequestInterceptor` (logs + filters sensitive headers), `MyResponseErrorHandler`, buffering response wrapper
+- **`configuration/ClientHttpRequestFactoryConfiguration`**: Configures separate timeouts for internal vs external HTTP calls via `httpclient5` (`HttpComponentsClientHttpRequestFactory`)
 - **`jdbc/ProjectRowMapper`**: Maps SQL result sets to domain objects
 
 ### Database
@@ -67,12 +67,14 @@ Controller (rest/) → Service (service/) → Client (client/) → PA Service (H
 
 ### Test Architecture
 
-Four distinct test approaches coexist in `zxf-springboot-ea-service/src/test/`:
+Five distinct test approaches coexist in `zxf-springboot-ea-service/src/test/`:
 
 | Class | Approach | Key Annotations |
 |---|---|---|
 | `SmokeTest` | Context load | `@SpringBootTest` |
-| `HomeControllerTest`, `[A/B/C]ControllerTest` | Slice tests | `@SpringBootTest` + `@AutoConfigureMockMvc` |
+| `HomeControllerTest`, `BControllerTest` | Full context + MockMvc | `@SpringBootTest(MOCK)` + `@AutoConfigureMockMvc` |
+| `AControllerTest` | Full context + TestRestTemplate + spy | `@SpringBootTest(RANDOM_PORT)` + `@MockitoSpyBean` |
+| `CControllerTest` | Web layer slice + spy | `@WebMvcTest` + `@Import(PAService.class)` + `@MockitoSpyBean` |
 | `ApiTestsWithMockModeTest` | MockMvc + WireMock | `@SpringBootTest(MOCK)` + `@WireMockTest(8089)` |
 | `ApiTestsWithServerModeTest` | Full server + TestRestTemplate | `@SpringBootTest(RANDOM_PORT)` |
 | `ApiTestsWithRestAssuredTest` | Rest-Assured + WireMock | `@SpringBootTest(RANDOM_PORT)` + `@WireMockTest(8090)` |
@@ -86,9 +88,23 @@ Four distinct test approaches coexist in `zxf-springboot-ea-service/src/test/`:
 
 **JSONAssert with regex matchers** is used for flexible response validation where fields like timestamps vary.
 
+**Mock annotations**: Use `@MockitoBean` / `@MockitoSpyBean` from `org.springframework.test.context.bean.override.mockito` (Spring Boot 3.4+). The old `@MockBean` / `@SpyBean` from `org.springframework.boot.test.mock.mockito` are deprecated and removed. Note: `@MockitoSpyBean` requires the bean to already exist in the context — use `@Import` in slice tests (`@WebMvcTest`) to register the real bean first.
+
 ## Key Configuration Properties
 
 EA service `application.properties` configures:
 - MySQL datasource (`spring.datasource.*`)
 - HTTP client timeouts: `client.internal.*` and `client.external.*` (connect/read/connection-request timeouts)
-- PA service base URL: `pa.service.url`
+- PA service base URL: `pa-service.url`
+
+## Key Dependencies
+
+Managed outside the Spring Boot BOM (declared in root `pom.xml` `dependencyManagement`):
+
+| Dependency | Version | Reason |
+|---|---|---|
+| `org.wiremock:wiremock-jetty12` | 3.13.0 | Not in Spring Boot BOM; Jetty 12 variant required for Spring Boot 3.5.x compatibility |
+| `io.rest-assured:rest-assured-bom` | 6.0.0 | Pins all rest-assured artifacts together |
+| `org.mozilla:rhino` | 1.7.15 | Overrides vulnerable 1.7.7.2 pulled transitively by `rest-assured:json-schema-validator` |
+
+All other versions (MySQL connector, httpclient5, H2, AssertJ, etc.) are managed by the Spring Boot BOM.
