@@ -7,7 +7,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import zxf.springboot.pa.client.PAClient;
 import zxf.springboot.pa.rest.request.TaskRequest;
 import zxf.springboot.pa.utils.SystemUtils;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class PAServiceTest {
     @Autowired
     private PAService paService;
-    @MockBean
+    @MockitoBean
     private PAClient paClient;
 
     public PAServiceTest() {
