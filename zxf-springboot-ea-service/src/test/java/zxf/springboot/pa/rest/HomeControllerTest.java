@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //Start with default webEnvironment SpringBootTest.WebEnvironment.MOCK
@@ -49,6 +49,6 @@ public class HomeControllerTest {
         MvcResult mvcResult = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
 
         //Then
-        assertEquals("Hello, World", mvcResult.getResponse().getContentAsString());
+        assertThat(mvcResult.getResponse().getContentAsString()).isEqualTo("Hello, World");
     }
 }

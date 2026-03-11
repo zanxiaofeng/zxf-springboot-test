@@ -27,7 +27,7 @@ import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
 import java.io.IOException;
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Slf4j
@@ -73,7 +73,7 @@ public class ApiTestsWithServerModeTest {
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
-        assertEquals(status, response.getStatusCodeValue());
+        assertThat(response.getStatusCodeValue()).isEqualTo(status);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
 
@@ -94,7 +94,7 @@ public class ApiTestsWithServerModeTest {
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
-        assertEquals(status, response.getStatusCodeValue());
+        assertThat(response.getStatusCodeValue()).isEqualTo(status);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
 
@@ -108,8 +108,8 @@ public class ApiTestsWithServerModeTest {
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
 
         //Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"task\":\"PA.B-200\",\"value\":\"1707039601500\"}}", response.getBody(), jsonComparator);
     }
 
@@ -123,8 +123,8 @@ public class ApiTestsWithServerModeTest {
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
 
         //Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
 
@@ -138,8 +138,8 @@ public class ApiTestsWithServerModeTest {
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
 
         //Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
 }

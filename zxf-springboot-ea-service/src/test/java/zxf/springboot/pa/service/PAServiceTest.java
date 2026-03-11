@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SpringBootTest(classes = {PAService.class})
@@ -48,13 +48,13 @@ public class PAServiceTest {
         TaskRequest taskRequest = new TaskRequest();
         taskRequest.setTask(200);
         Map<String, Object> result = new HashMap<>();
-        Mockito.when(paClient.callDownstreamSyncByPost("/pa/a/json", taskRequest, false)).thenReturn(result);
+        Mockito.when(paClient.callDownstreamSyncByPost("/pa/a/json", taskRequest, true)).thenReturn(result);
 
         //When
         Map<String, Object> realResult = paService.a(taskRequest);
 
         //Then
-        assertEquals(result, realResult.get("downstream"));
+        assertThat(realResult.get("downstream")).isSameAs(result);
     }
 
 
@@ -72,8 +72,8 @@ public class PAServiceTest {
             Map<String, Object> realResult = paService.c(taskId);
 
             //Then
-            assertEquals(result, realResult.get("downstream"));
-            assertEquals(123456789L, realResult.get("currentTimeMillis"));
+            assertThat(realResult.get("downstream")).isSameAs(result);
+            assertThat(realResult.get("currentTimeMillis")).isEqualTo(123456789L);
             systemUtilsMockedStatic.verify(()-> SystemUtils.currentTimeMillis());
         }
     }

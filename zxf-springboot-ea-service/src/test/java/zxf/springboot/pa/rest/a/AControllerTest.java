@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import org.mockito.ArgumentCaptor;
 
 @Slf4j
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -61,9 +63,12 @@ class AControllerTest {
         ResponseEntity<String> response = testRestTemplate.exchange(requestEntity, String.class);
 
         //Then
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("application/json", response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.A-200\",\"downstream\":{\"abc\":\"in Mock Service\"}}", response.getBody(), true);
-        Mockito.verify(paClient).callDownstreamSyncByPost(eq("/pa/a/json"), any(TaskRequest.class), eq(true));
+
+        ArgumentCaptor<TaskRequest> captor = ArgumentCaptor.forClass(TaskRequest.class);
+        verify(paClient).callDownstreamSyncByPost(eq("/pa/a/json"), captor.capture(), eq(true));
+        assertThat(captor.getValue().getTask()).isEqualTo(200);
     }
 }
