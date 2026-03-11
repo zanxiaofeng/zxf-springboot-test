@@ -2,27 +2,26 @@ package zxf.springboot.pa.apitest.springboot;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
 import org.junit.jupiter.api.*;
-import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.RegularExpressionValueMatcher;
-import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
+import zxf.springboot.pa.apitest.support.json.JSONComparatorFactory;
 
 import java.io.IOException;
 
@@ -31,7 +30,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@WireMockTest(httpPort = 8089)
+@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath= "mock-data")})
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = MOCK)
 @Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
@@ -53,11 +52,7 @@ public class ApiTestsWithMockModeTest {
     @BeforeEach
     void setupForEach() throws IOException {
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);
-        jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
-                Customization.customization("**.downstream.value",
-                        new RegularExpressionValueMatcher<>("\\d+")),
-                Customization.customization("currentTimeMillis",
-                        new RegularExpressionValueMatcher<>("\\d+")));
+        jsonComparator = JSONComparatorFactory.buildPAResponseJSONComparator();
         log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before each {}***************************");
     }
 
@@ -92,6 +87,7 @@ public class ApiTestsWithMockModeTest {
     }
 
     @Test
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql(scripts = {"/sql/cases/project-p-test.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = SqlConfig.TransactionMode.ISOLATED))
     void a_pa_200WithProjectIdPTest() throws Exception {
         //Given

@@ -110,6 +110,11 @@
 - com.github.tomakehurst.wiremock.verification.RequestJournal
 - com.github.tomakehurst.wiremock.WireMockServer
 
+# Core classes of WireMock-Spring
+- org.wiremock.spring.internal.WireMockSpringJunitExtension
+- org.wiremock.spring.EnableWireMock[Include @ExtendWith]
+- org.wiremock.spring.ConfigureWireMock
+
 # Core classes of RestTemplate
 - org.springframework.web.client.RestTemplate;
 - org.springframework.http.client.ClientHttpResponse[interface]

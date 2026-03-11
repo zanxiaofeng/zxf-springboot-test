@@ -1,8 +1,5 @@
 package zxf.springboot.pa.apitest.springboot;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -12,11 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.RegularExpressionValueMatcher;
-import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,16 +18,20 @@ import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.jdbc.SqlMergeMode;
+import org.wiremock.spring.ConfigureWireMock;
+import org.wiremock.spring.EnableWireMock;
+import zxf.springboot.pa.apitest.support.json.JSONComparatorFactory;
+import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
 
 import java.io.IOException;
 import java.net.URI;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Slf4j
-@WireMockTest(httpPort = 8090)
+@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath= "mock-data")})
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
 @Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
@@ -56,14 +53,7 @@ public class ApiTestsWithServerModeTest {
     @BeforeEach
     void setupForEach() throws IOException {
         requestTemplate = IOUtils.resourceToString("/test-data/a-post-request.json", Charsets.UTF_8);
-        Customization timestamp = Customization.customization("timestamp",
-                new RegularExpressionValueMatcher<>("[\\d T:.+-]+"));
-        Customization downstream = Customization.customization("**.downstream.value",
-                new RegularExpressionValueMatcher<>("\\d+"));
-        Customization currentTimeMillis = Customization.customization("currentTimeMillis",
-                new RegularExpressionValueMatcher<>("\\d+"));
-        jsonComparator = new CustomComparator(JSONCompareMode.STRICT,
-                timestamp, downstream, currentTimeMillis);
+        jsonComparator = JSONComparatorFactory.buildPAResponseJSONComparator();
         log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before each {}***************************");
     }
 
@@ -88,6 +78,7 @@ public class ApiTestsWithServerModeTest {
     }
 
     @ParameterizedTest(name = "for PA-{0} with project {1}")
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
     @Sql(scripts = {"/sql/cases/project-p-test.sql"}, config = @SqlConfig(encoding = "utf-8", transactionMode = SqlConfig.TransactionMode.ISOLATED))
     @CsvSource({"200,p-1,200,a-post-response-4-PA_200-with-project-p-1.json", "200,p-test,200,a-post-response-4-PA_200-with-project-p-test.json"})
     void aWithProjectIdForParameterizedTest(String task, String projectId, Integer status, String responseFile) throws Exception {
@@ -107,16 +98,11 @@ public class ApiTestsWithServerModeTest {
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
 
-
     @Test
-    void b(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void b_200() throws Exception {
         //Given
         String requestUrl = "/b/json?task=200";
-
-        // Dynamic mock can be used as required in callback code
-        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
-        wireMock.register(get("/pa/b/json?task=200").willReturn(ok("{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}")
-                .withHeader("Content-Type", "application/json")));
+        PAServiceMockFactory.mockBSuccessResponse("200", "{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}");
 
         //When
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
@@ -128,14 +114,10 @@ public class ApiTestsWithServerModeTest {
     }
 
     @Test
-    void c(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void c_200() throws Exception {
         //Given
         String requestUrl = "/c/json?task=200";
-
-        // Dynamic mock can be used as required in callback code
-        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
-        wireMock.register(get("/pa/c/json?task=200").willReturn(ok("{\"task\":\"PA.C-200\",\"value\":\"1707039601565\"}")
-                .withHeader("Content-Type", "application/json")));
+        PAServiceMockFactory.mockCSuccessResponse("200", "{\"task\":\"PA.C-200\",\"value\":\"1707039601565\"}");
 
         //When
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
@@ -147,14 +129,10 @@ public class ApiTestsWithServerModeTest {
     }
 
     @Test
-    void c400(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void c_400() throws Exception {
         //Given
         String requestUrl = "/c/json?task=400";
-
-        // Dynamic mock can be used as required in callback code
-        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
-        wireMock.register(get("/pa/c/json?task=400").willReturn(badRequest().withBody("{\"code\":\"400\"}")
-                .withHeader("Content-Type", "application/json")));
+        PAServiceMockFactory.mockCFailedResponse("400", 400, "{\"code\":\"400\"}");
 
         //When
         ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
