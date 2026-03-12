@@ -1,7 +1,6 @@
 package zxf.springboot.pa.apitest.restassured;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.google.common.base.Charsets;
 import io.restassured.RestAssured;
 import io.restassured.module.jsv.JsonSchemaValidator;
@@ -17,23 +16,39 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.wiremock.spring.ConfigureWireMock;
-import org.wiremock.spring.EnableWireMock;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Slf4j
-@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath= "mock-data")})
+@Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
 @Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
 public class ApiTestsWithRestAssuredTest {
+
+    @Container
+    static GenericContainer<?> wireMockServer = new GenericContainer<>(
+            DockerImageName.parse("wiremock/wiremock:3.9.2")
+    )
+            .withExposedPorts(8080)
+            .withFileSystemBind("src/test/resources/mock-data", "/home/wiremock");
+
+    @DynamicPropertySource
+    static void wireMockProperties(DynamicPropertyRegistry registry) {
+        registry.add("pa-service.url", () -> "http://" + wireMockServer.getHost() + ":" + wireMockServer.getFirstMappedPort());
+    }
+
     @LocalServerPort
     private Integer serverPort;
     private String requestTemplate;
@@ -77,9 +92,9 @@ public class ApiTestsWithRestAssuredTest {
 
 
     @Test
-    void b(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
-        // Dynamic mock can be used as required in callback code
-        WireMock wireMock = wireMockRuntimeInfo.getWireMock();
+    void b() {
+        // Configure dynamic stub using WireMock Java client connecting to the Docker container
+        WireMock wireMock = new WireMock(wireMockServer.getHost(), wireMockServer.getFirstMappedPort());
         wireMock.register(get("/pa/b/json?task=200").willReturn(ok("{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}")
                 .withHeader("Content-Type", "application/json")));
 
