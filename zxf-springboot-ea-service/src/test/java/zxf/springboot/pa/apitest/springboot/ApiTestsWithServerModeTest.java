@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
-import org.h2.jdbc.meta.DatabaseMeta;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +12,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlMergeMode;
@@ -27,22 +23,14 @@ import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
 import zxf.springboot.pa.apitest.support.sql.DatabaseVerifier;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @Slf4j
-@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath= "mock-data")})
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
+@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath = "mock-data")})
 @Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
-public class ApiTestsWithServerModeTest {
-    @Autowired
-    TestRestTemplate testRestTemplate;
+public class ApiTestsWithServerModeTest extends BaseApiTest {
+
     String requestTemplate;
     JSONComparator jsonComparator;
     @Autowired
@@ -72,15 +60,11 @@ public class ApiTestsWithServerModeTest {
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "null");
 
-        //When
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RequestEntity<Object> requestEntity = new RequestEntity<>(requestBody, headers, HttpMethod.POST, URI.create(requestUrl));
-        ResponseEntity<String> response = testRestTemplate.exchange(requestEntity, String.class);
+        //When - 使用简化方法 postAndAssert
+        ResponseEntity<String> response = postAndAssert(requestUrl, requestBody, HttpStatus.valueOf(status));
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
-        assertThat(response.getStatusCodeValue()).isEqualTo(status);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
         assertThat(databaseVerifier.verifySchema("project")).isTrue();
         assertThat(databaseVerifier.countRows("project")).isEqualTo(1);
@@ -95,15 +79,11 @@ public class ApiTestsWithServerModeTest {
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "\"" + projectId + "\"");
 
-        //When
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RequestEntity<Object> requestEntity = new RequestEntity<>(requestBody, headers, HttpMethod.POST, URI.create(requestUrl));
-        ResponseEntity<String> response = testRestTemplate.exchange(requestEntity, String.class);
+        //When - 使用简化方法 postAndAssert
+        ResponseEntity<String> response = postAndAssert(requestUrl, requestBody, HttpStatus.valueOf(status));
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
-        assertThat(response.getStatusCodeValue()).isEqualTo(status);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
     }
 
@@ -113,11 +93,10 @@ public class ApiTestsWithServerModeTest {
         String requestUrl = "/b/json?task=200";
         PAServiceMockFactory.mockBSuccessResponse("200", "{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}");
 
-        //When
-        ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
+        //When - 使用简化方法 getAndAssert
+        ResponseEntity<String> response = getAndAssert(requestUrl, HttpStatus.OK);
 
         //Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"task\":\"PA.B-200\",\"value\":\"1707039601500\"}}", response.getBody(), jsonComparator);
     }
@@ -128,11 +107,10 @@ public class ApiTestsWithServerModeTest {
         String requestUrl = "/c/json?task=200";
         PAServiceMockFactory.mockCSuccessResponse("200", "{\"task\":\"PA.C-200\",\"value\":\"1707039601565\"}");
 
-        //When
-        ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
+        //When - 使用简化方法 getAndAssert
+        ResponseEntity<String> response = getAndAssert(requestUrl, HttpStatus.OK);
 
         //Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
@@ -143,11 +121,10 @@ public class ApiTestsWithServerModeTest {
         String requestUrl = "/c/json?task=400";
         PAServiceMockFactory.mockCFailedResponse("400", 400, "{\"code\":\"400\"}");
 
-        //When
-        ResponseEntity<String> response = testRestTemplate.getForEntity(requestUrl, String.class);
+        //When - 使用简化方法 getAndAssert
+        ResponseEntity<String> response = getAndAssert(requestUrl, HttpStatus.OK);
 
         //Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
     }
