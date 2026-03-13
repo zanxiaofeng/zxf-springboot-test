@@ -26,14 +26,14 @@ import org.mockito.ArgumentCaptor;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-public class DBServiceTest {
+public class DBServiceMockTest {
     @InjectMocks
     private DBService dbService;
     @Mock
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
-    public DBServiceTest() {
+    public DBServiceMockTest() {
         log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Ctor {}***************************");
     }
 
