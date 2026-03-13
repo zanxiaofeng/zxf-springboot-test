@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.google.common.base.Charsets;
 import io.restassured.RestAssured;
 import io.restassured.module.jsv.JsonSchemaValidator;
+import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
@@ -13,9 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -27,15 +25,13 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 
 @Slf4j
 @Testcontainers
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
-public class ApiTestsWithRestAssuredTest {
+public class ApiTestsWithRestAssuredTest extends BaseRestAssuredTest {
 
     @Container
     static GenericContainer<?> wireMockServer = new GenericContainer<>(
@@ -49,8 +45,6 @@ public class ApiTestsWithRestAssuredTest {
         registry.add("pa-service.url", () -> "http://" + wireMockServer.getHost() + ":" + wireMockServer.getFirstMappedPort());
     }
 
-    @LocalServerPort
-    private Integer serverPort;
     private String requestTemplate;
 
     public ApiTestsWithRestAssuredTest() throws IOException {
@@ -66,8 +60,7 @@ public class ApiTestsWithRestAssuredTest {
     @BeforeEach
     void setupForEach() throws IOException {
         log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Before each {}***************************");
-        RestAssured.baseURI = "http://localhost";
-        RestAssured.port = serverPort;
+        super.setUp();
     }
 
 
@@ -78,15 +71,11 @@ public class ApiTestsWithRestAssuredTest {
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "null");
 
-        RestAssured
-                .given().log().all()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .body(requestBody.getBytes(StandardCharsets.UTF_8))
-                .post(requestUrl)
-                .then()
-                .statusCode(status)
-                .header(HttpHeaders.CONTENT_TYPE, Matchers.equalTo("application/json"))
-                .assertThat()
+        // Using simplified method postAndAssert
+        Response response = postAndAssert(requestUrl, requestBody.getBytes(StandardCharsets.UTF_8), status);
+
+        response.header("Content-Type", Matchers.equalTo("application/json"));
+        response.assertThat()
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("test-data/" + responseFile));
     }
 
@@ -98,13 +87,11 @@ public class ApiTestsWithRestAssuredTest {
         wireMock.register(get("/pa/b/json?task=200").willReturn(ok("{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}")
                 .withHeader("Content-Type", "application/json")));
 
-        RestAssured
-                .given().log().all()
-                .queryParam("task", "200")
-                .get("/b/json").then()
-                .statusCode(200)
-                .header(HttpHeaders.CONTENT_TYPE, Matchers.equalTo("application/json"))
-                .assertThat()
+        // Using simplified method getAndAssert
+        Response response = getAndAssert("/b/json?task=200", 200);
+
+        response.header("Content-Type", Matchers.equalTo("application/json"));
+        response.assertThat()
                 .body("task", Matchers.equalTo("EA.B-200"))
                 .body("downstream.task", Matchers.equalTo("PA.B-200"))
                 .body("downstream.value", Matchers.equalTo("1707039601565"));
