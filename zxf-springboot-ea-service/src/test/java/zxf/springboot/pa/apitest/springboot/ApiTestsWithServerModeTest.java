@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
+import org.h2.jdbc.meta.DatabaseMeta;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,13 @@ import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import zxf.springboot.pa.apitest.support.json.JSONComparatorFactory;
 import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
+import zxf.springboot.pa.apitest.support.sql.DatabaseVerifier;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -40,6 +45,8 @@ public class ApiTestsWithServerModeTest {
     TestRestTemplate testRestTemplate;
     String requestTemplate;
     JSONComparator jsonComparator;
+    @Autowired
+    DatabaseVerifier databaseVerifier;
 
     public ApiTestsWithServerModeTest() {
         log.atInfo().addArgument(() -> ProcessIdUtil.getProcessId()).log("***************************Ctor {}***************************");
@@ -75,6 +82,8 @@ public class ApiTestsWithServerModeTest {
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
         assertThat(response.getStatusCodeValue()).isEqualTo(status);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
+        assertThat(databaseVerifier.verifySchema("project")).isTrue();
+        assertThat(databaseVerifier.countRows("project")).isEqualTo(1);
     }
 
     @ParameterizedTest(name = "for PA-{0} with project {1}")

@@ -2,6 +2,7 @@ package zxf.springboot.pa.apitest.support.sql;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
  * Useful for test assertions and database validation.
  */
 @Slf4j
+@Component
 public class DatabaseVerifier {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -50,7 +52,7 @@ public class DatabaseVerifier {
         try {
             Integer count = jdbcTemplate.queryForObject(
                 query,
-                Collections.singletonMap("tableName", tableName.toUpperCase()),
+                Collections.singletonMap("tableName", tableName.toLowerCase()),
                 Integer.class
             );
             return count != null && count > 0;
