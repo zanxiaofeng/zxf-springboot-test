@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import zxf.springboot.pa.jdbc.ProjectRowMapper;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -25,5 +26,14 @@ public class DBService {
         log.info("queryProjectById:: query={}, parameters={}", query, projectId);
         Map<String, Object> parameters = Collections.singletonMap("projectId", projectId);
         return namedParameterJdbcTemplate.queryForObject(query, parameters, new ProjectRowMapper());
+    }
+
+    public int insertProject(String id, String name) {
+        String query = "INSERT INTO PROJECT (ID, NAME) VALUES (:id, :name)";
+        log.info("insertProject:: query={}, id={}, name={}", query, id, name);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("id", id);
+        parameters.put("name", name);
+        return namedParameterJdbcTemplate.update(query, parameters);
     }
 }
