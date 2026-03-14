@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -17,8 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Base test class for API tests using MockMvc.
  * Provides common GET/POST methods with optional status assertion.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
 public abstract class BaseMockMvcTest {
     @Autowired
     protected MockMvc mockMvc;
@@ -28,24 +30,24 @@ public abstract class BaseMockMvcTest {
     // ==================== GET Methods ====================
 
     /**
-     * Execute GET request without assertion.
+     * Execute HTTP GET request without assertion.
      *
      * @param url the request URL
      * @return MvcResult containing response
      */
-    protected MvcResult get(String url) throws Exception {
+    protected MvcResult httpGet(String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andReturn();
     }
 
     /**
-     * Execute GET request and assert status code.
+     * Execute HTTP GET request and assert status code.
      *
      * @param url            the request URL
      * @param expectedStatus expected HTTP status
      * @return MvcResult containing response
      */
-    protected MvcResult getAndAssert(String url, HttpStatus expectedStatus) throws Exception {
+    protected MvcResult httpGetAndAssert(String url, HttpStatus expectedStatus) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.get(url))
                 .andExpect(status().is(expectedStatus.value()))
                 .andReturn();
@@ -54,26 +56,26 @@ public abstract class BaseMockMvcTest {
     // ==================== POST Methods ====================
 
     /**
-     * Execute POST request without assertion.
+     * Execute HTTP POST request without assertion.
      *
      * @param url  the request URL
      * @param body the request body (will be serialized as JSON)
      * @return MvcResult containing response
      */
-    protected MvcResult post(String url, Object body) throws Exception {
+    protected MvcResult httpPost(String url, Object body) throws Exception {
         return mockMvc.perform(createPostRequest(url, body))
                 .andReturn();
     }
 
     /**
-     * Execute POST request and assert status code.
+     * Execute HTTP POST request and assert status code.
      *
      * @param url            the request URL
      * @param body           the request body
      * @param expectedStatus expected HTTP status
      * @return MvcResult containing response
      */
-    protected MvcResult postAndAssert(String url, Object body, HttpStatus expectedStatus) throws Exception {
+    protected MvcResult httpPostAndAssert(String url, Object body, HttpStatus expectedStatus) throws Exception {
         return mockMvc.perform(createPostRequest(url, body))
                 .andExpect(status().is(expectedStatus.value()))
                 .andReturn();
@@ -82,17 +84,17 @@ public abstract class BaseMockMvcTest {
     // ==================== PUT Methods ====================
 
     /**
-     * Execute PUT request without assertion.
+     * Execute HTTP PUT request without assertion.
      */
-    protected MvcResult put(String url, Object body) throws Exception {
+    protected MvcResult httpPut(String url, Object body) throws Exception {
         return mockMvc.perform(createPutRequest(url, body))
                 .andReturn();
     }
 
     /**
-     * Execute PUT request and assert status code.
+     * Execute HTTP PUT request and assert status code.
      */
-    protected MvcResult putAndAssert(String url, Object body, HttpStatus expectedStatus) throws Exception {
+    protected MvcResult httpPutAndAssert(String url, Object body, HttpStatus expectedStatus) throws Exception {
         return mockMvc.perform(createPutRequest(url, body))
                 .andExpect(status().is(expectedStatus.value()))
                 .andReturn();
@@ -101,17 +103,17 @@ public abstract class BaseMockMvcTest {
     // ==================== DELETE Methods ====================
 
     /**
-     * Execute DELETE request without assertion.
+     * Execute HTTP DELETE request without assertion.
      */
-    protected MvcResult delete(String url) throws Exception {
+    protected MvcResult httpDelete(String url) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andReturn();
     }
 
     /**
-     * Execute DELETE request and assert status code.
+     * Execute HTTP DELETE request and assert status code.
      */
-    protected MvcResult deleteAndAssert(String url, HttpStatus expectedStatus) throws Exception {
+    protected MvcResult httpDeleteAndAssert(String url, HttpStatus expectedStatus) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders.delete(url))
                 .andExpect(status().is(expectedStatus.value()))
                 .andReturn();

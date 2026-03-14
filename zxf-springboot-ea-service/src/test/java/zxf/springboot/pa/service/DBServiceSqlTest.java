@@ -48,7 +48,7 @@ public class DBServiceSqlTest {
         assertThat(result).isEqualTo(1);
         assertThat(databaseVerifier.recordExists("project", "id", id)).isTrue();
         assertThat(databaseVerifier.getValueById("project", "id", id, "name")).isEqualTo(name);
-        assertThat(databaseVerifier.countRows("project")).isEqualTo(2);v// p-1 + test-project-1
+        assertThat(databaseVerifier.countRows("project")).isEqualTo(2); // p-1 + test-project-1
     }
 
     @Test

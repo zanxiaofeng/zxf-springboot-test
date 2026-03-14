@@ -61,8 +61,8 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "null");
 
-        //When - 使用简化方法 postAndAssert
-        ResponseEntity<String> response = postAndAssert(requestUrl, requestBody, HttpStatus.valueOf(status));
+        //When - 使用简化方法 httpPostAndAssert
+        ResponseEntity<String> response = httpPostAndAssert(requestUrl, requestBody, HttpStatus.valueOf(status));
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
@@ -81,8 +81,8 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         String requestUrl = "/a/json";
         String requestBody = requestTemplate.replace("{{task}}", task).replace("{{projectId}}", "\"" + projectId + "\"");
 
-        //When - 使用简化方法 postAndAssert
-        ResponseEntity<String> response = postAndAssert(requestUrl, requestBody, HttpStatus.valueOf(status));
+        //When - 使用简化方法 httpPostAndAssert
+        ResponseEntity<String> response = httpPostAndAssert(requestUrl, requestBody, HttpStatus.valueOf(status));
 
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
@@ -98,8 +98,8 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         String requestUrl = "/b/json?task=200";
         PAServiceMockFactory.mockBSuccessResponse("200", "{\"task\":\"PA.B-200\",\"value\":\"1707039601565\"}");
 
-        //When - 使用简化方法 getAndAssert
-        ResponseEntity<String> response = getAndAssert(requestUrl, HttpStatus.OK);
+        //When - 使用简化方法 httpGetAndAssert
+        ResponseEntity<String> response = httpGetAndAssert(requestUrl, HttpStatus.OK);
 
         //Then
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
@@ -112,8 +112,8 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         String requestUrl = "/c/json?task=200";
         PAServiceMockFactory.mockCSuccessResponse("200", "{\"task\":\"PA.C-200\",\"value\":\"1707039601565\"}");
 
-        //When - 使用简化方法 getAndAssert
-        ResponseEntity<String> response = getAndAssert(requestUrl, HttpStatus.OK);
+        //When - 使用简化方法 httpGetAndAssert
+        ResponseEntity<String> response = httpGetAndAssert(requestUrl, HttpStatus.OK);
 
         //Then
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
@@ -126,8 +126,8 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         String requestUrl = "/c/json?task=400";
         PAServiceMockFactory.mockCFailedResponse("400", 400, "{\"code\":\"400\"}");
 
-        //When - 使用简化方法 getAndAssert
-        ResponseEntity<String> response = getAndAssert(requestUrl, HttpStatus.OK);
+        //When - 使用简化方法 httpGetAndAssert
+        ResponseEntity<String> response = httpGetAndAssert(requestUrl, HttpStatus.OK);
 
         //Then
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");

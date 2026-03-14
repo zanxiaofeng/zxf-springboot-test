@@ -24,24 +24,24 @@ public abstract class BaseServerModeTest {
     // ==================== GET Methods ====================
 
     /**
-     * Execute GET request without assertion.
+     * Execute HTTP GET request without assertion.
      *
      * @param url the request URL
      * @return ResponseEntity with String body
      */
-    protected ResponseEntity<String> get(String url) {
+    protected ResponseEntity<String> httpGet(String url) {
         return testRestTemplate.getForEntity(url, String.class);
     }
 
     /**
-     * Execute GET request and assert status code.
+     * Execute HTTP GET request and assert status code.
      *
      * @param url           the request URL
      * @param expectedStatus expected HTTP status
      * @return ResponseEntity with String body
      */
-    protected ResponseEntity<String> getAndAssert(String url, HttpStatus expectedStatus) {
-        ResponseEntity<String> response = get(url);
+    protected ResponseEntity<String> httpGetAndAssert(String url, HttpStatus expectedStatus) {
+        ResponseEntity<String> response = httpGet(url);
         assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
         return response;
     }
@@ -49,13 +49,13 @@ public abstract class BaseServerModeTest {
     // ==================== POST Methods ====================
 
     /**
-     * Execute POST request without assertion.
+     * Execute HTTP POST request without assertion.
      *
      * @param url  the request URL
      * @param body the request body (will be serialized as JSON)
      * @return ResponseEntity with String body
      */
-    protected ResponseEntity<String> post(String url, Object body) {
+    protected ResponseEntity<String> httpPost(String url, Object body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         RequestEntity<Object> requestEntity = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
@@ -63,15 +63,15 @@ public abstract class BaseServerModeTest {
     }
 
     /**
-     * Execute POST request and assert status code.
+     * Execute HTTP POST request and assert status code.
      *
      * @param url           the request URL
      * @param body          the request body
      * @param expectedStatus expected HTTP status
      * @return ResponseEntity with String body
      */
-    protected ResponseEntity<String> postAndAssert(String url, Object body, HttpStatus expectedStatus) {
-        ResponseEntity<String> response = post(url, body);
+    protected ResponseEntity<String> httpPostAndAssert(String url, Object body, HttpStatus expectedStatus) {
+        ResponseEntity<String> response = httpPost(url, body);
         assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
         return response;
     }
