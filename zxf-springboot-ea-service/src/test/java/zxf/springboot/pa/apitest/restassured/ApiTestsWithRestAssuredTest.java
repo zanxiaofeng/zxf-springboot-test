@@ -21,11 +21,11 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import zxf.springboot.pa.apitest.support.restassured.BaseRestAssuredTest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 
 @Slf4j

@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.net.URI;
 
@@ -15,9 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Provides common GET/POST methods with optional status assertion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
-public abstract class BaseApiTest {
-
+@Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
+public abstract class BaseServerModeTest {
     @Autowired
     protected TestRestTemplate testRestTemplate;
 

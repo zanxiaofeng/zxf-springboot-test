@@ -13,6 +13,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlMergeMode;
@@ -20,6 +21,7 @@ import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import zxf.springboot.pa.apitest.support.json.JSONComparatorFactory;
 import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
+import zxf.springboot.pa.apitest.support.springboot.BaseServerModeTest;
 import zxf.springboot.pa.apitest.support.sql.DatabaseVerifier;
 
 import java.io.IOException;
@@ -28,9 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath = "mock-data")})
-@Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
-public class ApiTestsWithServerModeTest extends BaseApiTest {
-
+@TestPropertySource(properties = {"pa-service.url=http://localhost:8090"})
+public class ApiTestsWithServerModeTest extends BaseServerModeTest {
     String requestTemplate;
     JSONComparator jsonComparator;
     @Autowired
@@ -66,6 +67,7 @@ public class ApiTestsWithServerModeTest extends BaseApiTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
+
         assertThat(databaseVerifier.verifySchema("project")).isTrue();
         assertThat(databaseVerifier.countRows("project")).isEqualTo(1);
     }
@@ -85,6 +87,9 @@ public class ApiTestsWithServerModeTest extends BaseApiTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
+
+        assertThat(databaseVerifier.verifySchema("project")).isTrue();
+        assertThat(databaseVerifier.countRows("project")).isEqualTo(2);
     }
 
     @Test
