@@ -21,6 +21,7 @@ import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import zxf.springboot.pa.apitest.support.json.JSONComparatorFactory;
 import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
+import zxf.springboot.pa.apitest.support.mocks.PAServiceMockVerifier;
 import zxf.springboot.pa.apitest.support.springboot.BaseServerModeTest;
 import zxf.springboot.pa.apitest.support.sql.DatabaseVerifier;
 
@@ -67,6 +68,7 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
+        PAServiceMockVerifier.verifyACalled(1, task);
 
         assertThat(databaseVerifier.verifySchema("project")).isTrue();
         assertThat(databaseVerifier.countRows("project")).isEqualTo(1);
@@ -87,6 +89,7 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/" + responseFile, Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, response.getBody(), jsonComparator);
+        PAServiceMockVerifier.verifyACalled(1, task);
 
         assertThat(databaseVerifier.verifySchema("project")).isTrue();
         assertThat(databaseVerifier.countRows("project")).isEqualTo(2);
@@ -104,6 +107,7 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         //Then
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"task\":\"PA.B-200\",\"value\":\"1707039601500\"}}", response.getBody(), jsonComparator);
+        PAServiceMockVerifier.verifyBCalled(1, "200");
     }
 
     @Test
@@ -118,6 +122,7 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         //Then
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
+        PAServiceMockVerifier.verifyCCalled(1, "200");
     }
 
     @Test
@@ -132,5 +137,6 @@ public class ApiTestsWithServerModeTest extends BaseServerModeTest {
         //Then
         assertThat(response.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE)).isEqualTo("application/json");
         JSONAssert.assertEquals("{\"task\":\"EA.C-400\",\"downstream\":{\"code\":\"400\"},\"currentTimeMillis\":123456789}", response.getBody(), jsonComparator);
+        PAServiceMockVerifier.verifyCCalled(1, "400");
     }
 }

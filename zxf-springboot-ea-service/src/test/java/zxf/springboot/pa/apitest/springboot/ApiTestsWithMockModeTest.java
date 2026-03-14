@@ -3,6 +3,7 @@ package zxf.springboot.pa.apitest.springboot;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.google.common.base.Charsets;
+import jakarta.servlet.ServletException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.ProcessIdUtil;
@@ -14,9 +15,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.client.HttpServerErrorException;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 import zxf.springboot.pa.apitest.support.json.JSONComparatorFactory;
+import zxf.springboot.pa.apitest.support.mocks.PAServiceMockFactory;
+import zxf.springboot.pa.apitest.support.mocks.PAServiceMockVerifier;
 import zxf.springboot.pa.apitest.support.springboot.BaseMockMvcTest;
 
 import java.io.IOException;
@@ -24,7 +28,7 @@ import java.io.IOException;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @Slf4j
-@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8090, filesUnderClasspath = "mock-data")})
+@EnableWireMock({@ConfigureWireMock(name = "pa-service", port = 8089, filesUnderClasspath = "mock-data")})
 public class ApiTestsWithMockModeTest extends BaseMockMvcTest {
     String requestTemplate;
     JSONComparator jsonComparator;
@@ -56,6 +60,7 @@ public class ApiTestsWithMockModeTest extends BaseMockMvcTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200.json", Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
+        PAServiceMockVerifier.verifyACalled(1, "200");
     }
 
     @Test
@@ -69,6 +74,7 @@ public class ApiTestsWithMockModeTest extends BaseMockMvcTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200-with-project-p-1.json", Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
+        PAServiceMockVerifier.verifyACalled(1, "200");
     }
 
     @Test
@@ -84,24 +90,27 @@ public class ApiTestsWithMockModeTest extends BaseMockMvcTest {
         //Then
         String expectedResponse = IOUtils.resourceToString("/test-data/a-post-response-4-PA_200-with-project-p-test.json", Charsets.UTF_8);
         JSONAssert.assertEquals(expectedResponse, mvcResult.getResponse().getContentAsString(), jsonComparator);
+        PAServiceMockVerifier.verifyACalled(1, "200");
     }
 
     @Test
-    void testA_PA_505() throws Exception {
+    void testA_PA_500() throws Exception {
         //Given
-        String requestBody = requestTemplate.replace("{{task}}", "505").replace("{{projectId}}", "null");
+        String requestBody = requestTemplate.replace("{{task}}", "500").replace("{{projectId}}", "null");
 
-        // Static mock
-        stubFor(post("/pa/a/json").withRequestBody(equalToJson(requestBody))
-                .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(WireMock.status(505)));
+        PAServiceMockFactory.mockAFailedResponse("500", 500, "{}");
 
-        //When - 使用简化方法 httpPostAndAssert
-        httpPostAndAssert("/a/json", requestBody, HttpStatus.INTERNAL_SERVER_ERROR);
+        ServletException servletException = Assertions.assertThrows(ServletException.class, () -> {
+            httpPost("/a/json", requestBody);
+        });
+
+        Assertions.assertInstanceOf(HttpServerErrorException.InternalServerError.class, servletException.getCause());
+
+        PAServiceMockVerifier.verifyACalled(1, "500");
     }
 
     @Test
-    void b(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void b_200(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         // Dynamic mock can be used as required in callback code
         WireMock wireMock = wireMockRuntimeInfo.getWireMock();
@@ -113,10 +122,11 @@ public class ApiTestsWithMockModeTest extends BaseMockMvcTest {
 
         //Then
         JSONAssert.assertEquals("{\"task\":\"EA.B-200\",\"downstream\":{\"task\":\"PA.B-200\",\"value\":\"1707039601500\"}}", mvcResult.getResponse().getContentAsString(), jsonComparator);
+        PAServiceMockVerifier.verifyBCalled(1, "200");
     }
 
     @Test
-    void c(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
+    void c_200(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         //Given
         // Dynamic mock can be used as required in callback code
         WireMock wireMock = wireMockRuntimeInfo.getWireMock();
@@ -128,6 +138,7 @@ public class ApiTestsWithMockModeTest extends BaseMockMvcTest {
 
         //Then
         JSONAssert.assertEquals("{\"task\":\"EA.C-200\",\"downstream\":{\"task\":\"PA.C-200\",\"value\":\"1707039601500\"},\"currentTimeMillis\":123456789}", mvcResult.getResponse().getContentAsString(), jsonComparator);
+        PAServiceMockVerifier.verifyCCalled(1, "200");
     }
 
     @Test
