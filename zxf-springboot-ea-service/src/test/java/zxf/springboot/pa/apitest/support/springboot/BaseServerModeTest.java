@@ -52,13 +52,13 @@ public abstract class BaseServerModeTest {
      * Execute HTTP POST request without assertion.
      *
      * @param url  the request URL
-     * @param body the request body (will be serialized as JSON)
+     * @param body the request body as JSON string
      * @return ResponseEntity with String body
      */
-    protected ResponseEntity<String> httpPost(String url, Object body) {
+    protected ResponseEntity<String> httpPost(String url, String body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        RequestEntity<Object> requestEntity = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+        RequestEntity<String> requestEntity = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         return testRestTemplate.exchange(requestEntity, String.class);
     }
 
@@ -66,11 +66,11 @@ public abstract class BaseServerModeTest {
      * Execute HTTP POST request and assert status code.
      *
      * @param url           the request URL
-     * @param body          the request body
+     * @param body          the request body as JSON string
      * @param expectedStatus expected HTTP status
      * @return ResponseEntity with String body
      */
-    protected ResponseEntity<String> httpPostAndAssert(String url, Object body, HttpStatus expectedStatus) {
+    protected ResponseEntity<String> httpPostAndAssert(String url, String body, HttpStatus expectedStatus) {
         ResponseEntity<String> response = httpPost(url, body);
         assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
         return response;
