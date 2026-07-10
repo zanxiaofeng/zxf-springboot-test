@@ -9,7 +9,7 @@ import org.skyscreamer.jsonassert.comparator.JSONComparator;
 public class JSONComparatorFactory {
     public static JSONComparator buildPAResponseJSONComparator() {
         Customization timestamp = Customization.customization("timestamp",
-                new RegularExpressionValueMatcher<>("[\\d T:.+-]+"));
+                new RegularExpressionValueMatcher<>("[\\d T:.+Z-]+"));
         Customization downstream = Customization.customization("**.downstream.value",
                 new RegularExpressionValueMatcher<>("\\d+"));
         Customization currentTimeMillis = Customization.customization("currentTimeMillis",

@@ -1,8 +1,9 @@
 package zxf.springboot.pa.apitest.support.springboot;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Provides common GET/POST methods with optional status assertion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 @Sql(scripts = {"/sql/cleanup/clean-up.sql", "/sql/init/schema.sql", "/sql/init/data.sql"})
 public abstract class BaseServerModeTest {
     @Autowired

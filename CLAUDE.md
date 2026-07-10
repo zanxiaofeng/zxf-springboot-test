@@ -40,7 +40,7 @@ docker compose up -d
 
 ## Architecture Overview
 
-This is a two-service Spring Boot 3.5.11 / Java 21 project demonstrating REST API and testing patterns.
+This is a two-service Spring Boot 4.1.0 / Java 21 project demonstrating REST API and testing patterns.
 
 ### Services
 
@@ -90,6 +90,12 @@ Five distinct test approaches coexist in `zxf-springboot-ea-service/src/test/`:
 
 **Mock annotations**: Use `@MockitoBean` / `@MockitoSpyBean` from `org.springframework.test.context.bean.override.mockito` (Spring Boot 3.4+). The old `@MockBean` / `@SpyBean` from `org.springframework.boot.test.mock.mockito` are deprecated and removed. Note: `@MockitoSpyBean` requires the bean to already exist in the context — use `@Import` in slice tests (`@WebMvcTest`) to register the real bean first.
 
+**Spring Boot 4.x test infrastructure** (modularization moved packages and auto-config):
+- Main web stack uses `spring-boot-starter-webmvc` (the old `spring-boot-starter-web` is deprecated). Tests use `spring-boot-starter-webmvc-test` (provides MockMvc auto-config and brings `spring-boot-starter-test` transitively).
+- `@AutoConfigureMockMvc` and `@WebMvcTest` moved to `org.springframework.boot.webmvc.test.autoconfigure` (was `org.springframework.boot.test.autoconfigure.web.servlet`). `@SpringBootTest` no longer auto-provides MockMvc — `@AutoConfigureMockMvc` is now mandatory.
+- `TestRestTemplate` moved to `org.springframework.boot.resttestclient.TestRestTemplate`. `@SpringBootTest` no longer auto-provides it — add `@AutoConfigureTestRestTemplate` (from `org.springframework.boot.resttestclient.autoconfigure`) and the `spring-boot-starter-restclient-test` dependency (which brings `spring-boot-resttestclient` + `spring-boot-restclient`).
+- Jackson 3 (`tools.jackson` packages) is the default JSON library; the default error-response `timestamp` now serializes with a `Z` suffix (e.g. `...881Z`) instead of `+00:00`, so the `JSONComparatorFactory` timestamp regex includes `Z`.
+
 ## Key Configuration Properties
 
 EA service `application.properties` configures:
@@ -103,7 +109,7 @@ Managed outside the Spring Boot BOM (declared in root `pom.xml` `dependencyManag
 
 | Dependency | Version | Reason |
 |---|---|---|
-| `org.wiremock:wiremock-jetty12` | 3.13.0 | Not in Spring Boot BOM; Jetty 12 variant required for Spring Boot 3.5.x compatibility |
+| `org.wiremock:wiremock-jetty12` | 3.12.0 | Not in Spring Boot BOM; Jetty 12 variant required for Spring Boot 4.x compatibility |
 | `io.rest-assured:rest-assured-bom` | 6.0.0 | Pins all rest-assured artifacts together |
 | `org.mozilla:rhino` | 1.7.15 | Overrides vulnerable 1.7.7.2 pulled transitively by `rest-assured:json-schema-validator` |
 

@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import zxf.springboot.pa.client.PAClient;
 import zxf.springboot.pa.rest.request.TaskRequest;
@@ -28,6 +29,7 @@ import org.mockito.ArgumentCaptor;
 
 @Slf4j
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@AutoConfigureTestRestTemplate
 class AControllerTest {
     @Autowired
     TestRestTemplate testRestTemplate;
